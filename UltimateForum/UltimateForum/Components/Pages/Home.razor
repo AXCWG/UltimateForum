@@ -1,5 +1,5 @@
 ﻿@page "/"
-@using AXHelper.StringExtensions
+@using AXHelper.Extensions
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Microsoft.EntityFrameworkCore
 @rendermode InteractiveServer
@@ -17,7 +17,7 @@
             <h5>@Config["ForumDescription"]</h5>
         </FluentGridItem>
         <FluentGridItem xs="12" sm="4">
-            <div class="d-flex card p-4 flex-column gap-3">
+            <div class="d-flex card p-4 flex-column gap-3" style="">
                 <FluentTextField Placeholder="用户名" @bind-Value="_username"></FluentTextField>
                 <FluentTextField TextFieldType="TextFieldType.Password" Placeholder="密码" @bind-Value="_password"></FluentTextField>
                 <div class="d-flex flex-row gap-1">

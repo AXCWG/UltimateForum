@@ -1,0 +1,50 @@
+﻿@page
+@using UltimateForum.Razor.Pages.User
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@inject IConfiguration Config
+<div class="row gap-md-0 gap-4">
+    <div class="col-md-8 d-flex flex-column justify-content-center ">
+        
+            <h1 class="display-5 m-0">欢迎来到 @Config["ForumName"]</h1>
+            <div>@Config["ForumDescription"]</div>
+    </div>
+    <div class="col-md-4">
+        @if (HttpContext.Session.GetString("uid") is null)
+        {
+            <form id="login-form" method="post">
+                <div class="card p-4 d-flex gap-2">
+                    <span class="text-danger" asp-validation-for="@Model.Username" ></span>
+                    <input placeholder="用户名" class="form-control" asp-for="@Model.Username"/>
+                    <div asp-validation-summary="ModelOnly"></div>
+                    <span class="text-danger" asp-validation-for="@Model.Password" ></span>
+                    <input placeholder="密码" class="form-control"  asp-for="@Model.Password" type="password"/>
+                    <div class="d-flex flex-row gap-1">
+                        <button class="flex-grow-1 btn btn-primary" type="submit"  asp-page-handler="Login">登录</button>
+                        <button class="flex-grow-1 btn btn-secondary">注册...</button>
+                    </div>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="card p-4 d-flex gap-2">
+                <h4>您已登录</h4>
+                <div>欢迎回来，@Model.Username！</div>
+                <form method="post">
+                    <div class="d-flex flex-row">
+                        <button class="btn btn-danger" type="submit" asp-page-handler="Logout">登出</button>
+                        
+                    </div> 
+                    
+                </form>
+                <a class="btn btn-danger"  asp-page="/User/ChangePassword">更改密码</a>
+            </div>
+        }
+            
+
+       
+    </div>
+</div>

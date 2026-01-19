@@ -1,13 +1,18 @@
 using AXHelper.Extensions;
 using AXHelper.Helpers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.FluentUI.AspNetCore.Components;
-using UltimateForum;
-using UltimateForum.Components;
 using UltimateForum.Db;
 using UltimateForum.Db.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorPages();
+builder.Services.AddSession(o =>
+{
+    o.IdleTimeout = TimeSpan.FromDays(7);
+});
+builder.Services.AddMemoryCache();
 switch (builder.Configuration["DbType"])
 {
     case "sqlite":
@@ -22,41 +27,26 @@ using (var db = new BinaryDbContext(builder.Configuration.GetConnectionString("B
 {
     db.Database.EnsureCreated();
 }
-
-
 builder.Services.AddDbContext<BinaryDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("BinaryConnection")));
-builder.Services.AddFluentUIComponents();
-builder.Services.AddHttpClient();
-
-
-// Add services to the container.
-builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseWebAssemblyDebugging();
-}
-else
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
+app.UseSession(); 
+app.UseRouting();
 
-app.UseAntiforgery();
+app.UseAuthorization();
 
 app.MapStaticAssets();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode()
-    .AddInteractiveWebAssemblyRenderMode()
-    .AddAdditionalAssemblies(typeof(UltimateForum.Client._Imports).Assembly);
+app.MapRazorPages()
+    .WithStaticAssets();
 if (!File.Exists("INIT"))
 {
     var password = StringHelper.RandomString(8);
