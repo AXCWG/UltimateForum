@@ -1,0 +1,16 @@
+@page "/TestInteractive"
+@rendermode InteractiveServer
+<h3>TestInteractive</h3>
+
+
+@_count
+
+<button class="btn btn-primary" @onclick="Incremental">Increment.</button>
+@code {
+    private int _count = 0;
+
+    void Incremental()
+    {
+        _count++; 
+    }
+}

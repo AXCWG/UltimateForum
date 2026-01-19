@@ -1,0 +1,60 @@
+﻿@page "/"
+@using AXHelper.StringExtensions
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Microsoft.EntityFrameworkCore
+@rendermode InteractiveServer
+@using UltimateForum.Db
+@inject IConfiguration Config
+@inject ForumDbContext db
+@inject BinaryDbContext binary
+@inject ProtectedSessionStorage ProtectedSessionStore  
+
+<PageTitle>Welcome to @Config["ForumName"]</PageTitle>
+<div class="container mt-3">
+    <FluentGrid AdaptiveRendering="true" >
+        <FluentGridItem xs="12" sm="8" Class="d-flex flex-column justify-content-center">
+            <h1 class="display-5 m-0">欢迎来到 @Config["ForumName"]！</h1>
+            <h5>@Config["ForumDescription"]</h5>
+        </FluentGridItem>
+        <FluentGridItem xs="12" sm="4">
+            <div class="d-flex card p-4 flex-column gap-3">
+                <FluentTextField Placeholder="用户名" @bind-Value="_username"></FluentTextField>
+                <FluentTextField TextFieldType="TextFieldType.Password" Placeholder="密码" @bind-Value="_password"></FluentTextField>
+                <div class="d-flex flex-row gap-1">
+                    <FluentButton Appearance="Appearance.Accent" Class="flex-grow-1" OnClick="@Login">登录</FluentButton>
+                    <FluentButton Class="flex-grow-1" OnClick="@Register">注册</FluentButton>
+                </div>
+                
+            </div>
+        </FluentGridItem>
+    </FluentGrid>
+    
+    @foreach (var dbBoard in db.Boards.Include(i => i.Posts))
+    {
+        <div>
+            @dbBoard.Name - @dbBoard.Posts.OrderByDescending(i => i.CreatedOn).FirstOrDefault()?.Title
+        </div>
+    }
+
+</div>
+
+@code{
+
+    private string _username = "";
+    private string _password = ""; 
+    private void Login()
+    {
+        var user = db.Users.FirstOrDefault(i => i.Username == _username && i.Password == _password.ToSha256String());
+        if (user is null)
+        {
+            throw new Exception(); 
+        }
+        ProtectedSessionStore.SetAsync("uid", user.Id);
+    }
+
+    private void Register()
+    {
+        
+    }
+
+}

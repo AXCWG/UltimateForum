@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="UltimateForum/UltimateForum.Client/UltimateForum.Client.csproj" />
+  <Project Path="UltimateForum/UltimateForum/UltimateForum.csproj" />
+</Solution>
