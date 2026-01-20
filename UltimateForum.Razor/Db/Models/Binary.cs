@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace UltimateForum.Db.Models;
+namespace UltimateForum.Razor.Db.Models;
 
 [PrimaryKey(nameof(Uuid))]
 public class Binary

@@ -2,15 +2,21 @@ using System.ComponentModel.DataAnnotations;
 using AXHelper.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using UltimateForum.Db;
+using UltimateForum.Db.Models;
+using UltimateForum.Razor.Db;
+using UltimateForum.Razor.Db.Models;
 
 namespace UltimateForum.Razor.Pages;
 
-public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext) : PageModel
+public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext, IConfiguration configuration) : PageModel
 {
     private readonly ForumDbContext _db = context;
     private readonly BinaryDbContext _binaryDbContext = binaryDbContext;
+    public readonly IConfiguration Configuration = configuration;
+    public List<Board> Boards = []; 
 
     
     [BindProperty]
@@ -21,22 +27,47 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext)
         [Required(AllowEmptyStrings = false, ErrorMessage = "密码为必填项")]
         public required string Password { get; set; }
     
-    public void OnGet()
+    public IActionResult OnGet()
     {
+        if (Configuration["AllowUserCreateBoard"] == "True")
+        {
+            Boards = _db.Boards
+                .OrderByDescending(i => i.Created)
+                .ToList();
+        }
+        else
+        {
+            Boards = _db.Boards
+                .OrderBy(i => i.Order).ToList();
+        }
         if(HttpContext.Session.GetString("uid") != null)
         {
-            var u = _db.Users.FirstOrDefault(i=>i.Id == long.Parse(HttpContext.Session.GetString("uid")));
+            var u = _db.Users.FirstOrDefault(i=>i.Id == long.Parse(HttpContext.Session.GetString("uid") ?? string.Empty));
             if (u is null)
             {
                 HttpContext.Session.Remove("uid");
-                RedirectToPage("/Index");
-                return; 
+                return RedirectToPage("/Index");
             }
             Username = u.Username; 
             
         }
+        return Page();
     }
 
+    public int GetTopicCount(long boardId)
+    {
+        return _db.Topics.Count(i => i.BoardId == boardId);
+    }
+
+    public int GetPostCount(long boardId)
+    {
+        return _db.Topics.Where(i=>i.BoardId == boardId).Include(i => i.Posts).Sum(i => i.Posts.Count);
+    }
+
+    public Post? GetLatestPost(long boardId)
+    {
+        return _db.Posts.Where(i=>i.Topic.BoardId == boardId).Include(i=>i.Topic).Include(i=>i.Creator).OrderByDescending(i=>i.CreatedAt).FirstOrDefault() ?? null;
+    }
     public IActionResult OnPostLogin()
     {
         if (!ModelState.IsValid) return BadRequest("输入不合法");

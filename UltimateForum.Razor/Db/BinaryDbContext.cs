@@ -1,9 +1,9 @@
 ﻿using AXHelper.Extensions;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Db.Models;
+using UltimateForum.Razor.Db.Models;
 
-namespace UltimateForum.Db;
+namespace UltimateForum.Razor.Db;
 
 public class BinaryDbContext : DbContext
 {

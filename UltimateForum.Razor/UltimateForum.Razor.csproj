@@ -7,12 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="AXHelper">
-        <HintPath>..\..\AXHelper\AXHelper\bin\Release\net6.0\AXHelper.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        <PrivateAssets>all</PrivateAssets>
+      </PackageReference>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
 
     </ItemGroup>
@@ -28,6 +26,10 @@
       <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\dist\jquery.validate.unobtrusive.min.js" />
       <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\AXHelper\AXHelper\AXHelper.csproj" />
     </ItemGroup>
 
 </Project>
