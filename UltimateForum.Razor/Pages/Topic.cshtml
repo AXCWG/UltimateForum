@@ -1,4 +1,152 @@
 @page
+@using UltimateForum.Razor.Pages.User
 @model UltimateForum.Razor.Pages.Topic
+@{
+    ViewData["Title"] = Model.TopicData?.Title;
+}
+<div style="max-width: 50rem" class="mx-auto">
+    <div class="d-flex justify-content-between align-items-baseline gap-3">
+        <div class="d-flex gap-3">
+            <a class="btn btn-primary btn-sm ">发布回复</a>
+            <input placeholder="搜索" class="form-control form-control-sm w-auto"/>
+        </div>
+        <div>
+            @if (Model.Username(HttpContext.Session.GetLong("uid")) is not null)
+            {
+                <a asp-page="/">@Model.Username(HttpContext.Session.GetLong("uid"))</a>
+            }
+            else
+            {
+                <div class="d-flex gap-3">
+                    <a asp-page="/Login">登录</a>
+                    <a asp-page="/Register">注册</a>
+                    
+                </div>
+                }
+        </div>
+        
+    </div>
+    <table class=" p-3 table  table-bordered mt-3">
+        <tbody class="">
+        <!-- Topic View -->
+        <tr class="h-auto">
+            <td class="p-3">
+                <div>
+                    <h4 class="p-0 m-0">@Model.TopicData?.Title</h4>
+                    <div class="pb-2" style="font-size: .7rem">作者：
+                        @if (Model.TopicData?.Creater?.Username is null)
+                        {
+                            <span>未知或已删除@@@Model.TopicData?.CreatedOn</span>
+                        }
+                        else
+                        {
+                            <a asp-page="/">@Model.TopicData.Creater.Username</a><span>@@@Model.TopicData?.CreatedOn</span>
+                        }
+                    </div>
+                    <div style="font-size: .9rem">@Model.TopicData?.Content</div>
+                </div>
+                <div style="height: 4rem">
 
-<div>@Model.TopicId</div>
+                </div>
+
+            </td>
+            <td class="col-3 ">
+                <div style="font-size: .7rem" class="d-flex flex-column justify-content-center">
+                    @if (Model.TopicData?.Creater is null)
+                    {
+                        <div>匿名或已删除</div>
+                    }
+                    else
+                    {
+                        @if (Model.TopicData.Creater.AvatarUuid is not null)
+                        {
+                            <img class="img-fluid"
+                                 src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                                 style="width: 2rem;height: 2rem;" alt="avatar"/>
+                        }
+
+                        <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                    }
+
+
+                </div>
+
+            </td>
+        </tr>
+        <!-- End Topic View -->
+        @foreach (var p in Model.TopicData?.Posts ?? [])
+        {
+            <tr class="h-auto">
+                <td class="p-3">
+                    <div>
+                        <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
+                        <div class="pb-2" style="font-size: .7rem">作者：
+                            @if (p.Creator is null)
+                            {
+                                <span>匿名或已删除@@@p.CreatedAt</span>
+                            }
+                            else
+                            {
+                                <a asp-page="/">@p.Creator.Username</a><span>@@@p.CreatedAt</span>
+                            }
+                        </div>
+                        <div style="font-size: .9rem">
+                            @if (p.Quotting.Count != 0)
+                            {
+                                @foreach (var post in p.Quotting)
+                                {
+                                    <div class="card p-3 mb-2">
+                                        <div>
+                                            <span>@if (post.Creator?.Username is null)
+                                                  {
+                                                      <span style="font-size: .7rem">匿名或已删除 @@ @post.CreatedAt > </span>
+                                                  }
+                                                  else
+                                                  {
+                                                      <div style="font-size: .7rem">
+                                                            <div ><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > </div>
+                                                      <div>@post.Content</div>
+                                                      </div>
+                                                    
+                                                  }</span>
+                                        </div>
+                                    </div>
+                                }
+
+                                
+                            }
+                            @p.Content
+                        </div>
+                    </div>
+                    <div style="height: 4rem">
+
+                    </div>
+
+                </td>
+                <td class="col-3 ">
+                    <div style="font-size: .7rem" class="d-flex flex-column justify-content-center">
+                        @if (Model.TopicData?.Creater is null)
+                        {
+                            <div>匿名或已删除</div>
+                        }
+                        else
+                        {
+                            @if (Model.TopicData.Creater.AvatarUuid is not null)
+                            {
+                                <img class="img-fluid"
+                                     src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                                     style="width: 2rem;height: 2rem;" alt="avatar"/>
+                            }
+
+                            <a asp-page="/">@p.Creator?.Username</a>
+                        }
+
+
+                    </div>
+
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

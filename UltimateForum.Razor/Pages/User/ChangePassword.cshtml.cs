@@ -45,9 +45,9 @@ public static class SesisonExtension
 {
     extension(ISession session)
     {
-        public long GetLong(string key)
+        public long? GetLong(string key)
         {
-            return long.Parse(session.GetString(key) ?? throw new InvalidOperationException());
+            return session.GetString(key) is null ? null :long.Parse(session.GetString(key)!);
         }
     }
 }

@@ -66,7 +66,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
 
     public Post? GetLatestPost(long boardId)
     {
-        return _db.Posts.Where(i=>i.Topic.BoardId == boardId).Include(i=>i.Topic).Include(i=>i.Creator).OrderByDescending(i=>i.CreatedAt).FirstOrDefault() ?? null;
+        return _db.Posts.Include(i=>i.Topic).Where(i=>i.Topic.BoardId == boardId).Include(i=>i.Creator).OrderByDescending(i=>i.CreatedAt).FirstOrDefault() ?? null;
     }
     public IActionResult OnPostLogin()
     {

@@ -7,7 +7,7 @@
 @{
     ViewData["Title"] = "Home page";
 }
-<div class="row gap-md-0 gap-4">
+<div style="max-width: 60rem" class="row mx-auto gap-md-0 gap-4">
     <div class="col-md-8 d-flex flex-column justify-content-center ">
         
         <h1 class="display-5 m-0">欢迎来到 @Model.Configuration["ForumName"]</h1>
@@ -50,7 +50,7 @@
        
     </div>
 </div>
-<div class="row mt-4">
+<div style="max-width: 60rem" class="row mt-4 mx-auto">
     <table class="table table-bordered" id="boards">
         <thead>
         <tr>
@@ -59,13 +59,13 @@
                     <span>板块</span>
                 </div>
             </td>
-            <td class="col-1">
+            <td class="col-1 d-none d-md-table-cell">
                 贴子
             </td>
-            <td class="col-1">
+            <td class="col-1 d-none d-md-table-cell">
                 回复
             </td>
-            <td>
+            <td class="d-none d-sm-table-cell">
                 最新回复
             </td>
         </tr>
@@ -78,13 +78,13 @@
                     <h5>@b.Name</h5>
                     <div>@b.Description</div>
                 </td>
-                <td class="text-center">
+                <td class="text-center d-none d-md-table-cell">
                     <span>@Model.GetTopicCount(b.Id)</span>
                 </td>
-                <td class="text-center">
+                <td class="text-center d-none d-md-table-cell">
                     <span>@Model.GetPostCount(b.Id)</span>
                 </td>
-                <td>
+                <td class="d-none d-sm-table-cell">
                     <span>
                         @{
                             var latest = Model.GetLatestPost(b.Id);
@@ -97,8 +97,8 @@
                             {
                                 <div style="font-size: 12px">
                                     <div><a asp-page="/Topic" asp-route-TopicId="@latest.TopicId">Re: <strong >@latest.Topic.Title</strong></a></div>
-                                    <div>By: <strong>@latest.Creator.Username</strong></div>
-                                    <div class="text-secondary-emphasis">@latest.Content.ConcatEllipsisByChar(5)</div>
+                                    <div>By: <strong>@(latest.Creator?.Username ?? "匿名")</strong></div>
+                                    <div class="text-secondary-emphasis">@latest.Content.ConcatEllipsisByChar(6)</div>
                                 </div>
                                 
                             }
