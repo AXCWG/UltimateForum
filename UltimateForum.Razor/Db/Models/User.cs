@@ -22,5 +22,6 @@ public class User
     public ICollection<Topic> CreatedTopics { get; set; }
     public ICollection<Post> CreatedPosts { get; set;  }
     public ICollection<BoardGroup> CreatedBoardGroups { get; set; }
+    public required DateTime Joined { get; set; }
     public required bool Op { get; set; }
 }

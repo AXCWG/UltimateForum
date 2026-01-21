@@ -16,7 +16,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
     private readonly ForumDbContext _db = context;
     private readonly BinaryDbContext _binaryDbContext = binaryDbContext;
     public readonly IConfiguration Configuration = configuration;
-    public List<Board> Boards = []; 
+    public List<Db.Models.Board> Boards = []; 
 
     
     [BindProperty]
@@ -89,7 +89,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
         return RedirectToPage("/Index"); 
     }
 
-   
+    
 
     
 }

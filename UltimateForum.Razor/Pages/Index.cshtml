@@ -71,12 +71,15 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (Board b in Model.Boards)
+        @foreach (Db.Models.Board b in Model.Boards)
         {
             <tr>
                 <td>
-                    <h5>@b.Name</h5>
-                    <div>@b.Description</div>
+                    <div >
+                        <h5><a asp-page="/Board" asp-route-boardid="@b.Id">@b.Name</a></h5>
+                        <div style="font-size: .7rem">@b.Description</div>
+                    </div>
+                   
                 </td>
                 <td class="text-center d-none d-md-table-cell">
                     <span>@Model.GetTopicCount(b.Id)</span>
@@ -90,13 +93,13 @@
                             var latest = Model.GetLatestPost(b.Id);
                             if (latest is null)
                             {
-                                <span>板块中无贴</span>
+                                <span>板块中无话题</span>
                                 
                             }
                             else
                             {
                                 <div style="font-size: 12px">
-                                    <div><a asp-page="/Topic" asp-route-TopicId="@latest.TopicId">Re: <strong >@latest.Topic.Title</strong></a></div>
+                                    <div><a asp-page="/Topic" asp-route-TopicId="@latest.TopicId" asp-fragment="@latest.Id">Re: <strong >@latest.Topic.Title</strong></a></div>
                                     <div>By: <strong>@(latest.Creator?.Username ?? "匿名")</strong></div>
                                     <div class="text-secondary-emphasis">@latest.Content.ConcatEllipsisByChar(6)</div>
                                 </div>

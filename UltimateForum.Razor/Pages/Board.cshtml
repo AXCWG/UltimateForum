@@ -1,0 +1,62 @@
+@page
+@using UltimateForum.Razor.Db.Models
+@model UltimateForum.Razor.Pages.Board
+@{
+    ViewData["Title"] = Model.BoardSpec.Name + "板块";
+}
+@section NavView
+{
+    <a asp-page="/Index" id="index" class="me-2">首页</a>
+    /
+    <a class="ms-2 me-2" id="board" asp-page="/Board" asp-route-boardid="@Model.BoardId">@Model.BoardSpec?.Name</a>
+    }
+
+<div class="mb-3">
+    <a asp-page="/Index" >@{ var e = "<==";<span>@e</span>} 主页</a>
+</div>
+<table class="table table-bordered">
+    <thead>
+    <tr>
+        <td >
+            话题
+        </td>
+        <td class="col-1">
+            回复
+        </td>
+        <td class="col-2">
+            最新回复
+        </td>
+    </tr>
+    </thead>
+    <tbody style="font-size: .9rem">
+    @foreach (var boardSpecTopic in Model.BoardSpec.Topics)
+    {
+        <tr>
+            <td >
+                <a style="font-size: 1.25rem" asp-page="/Topic" asp-route-topicId="@boardSpecTopic.Id">@boardSpecTopic.Title</a>
+                <div>By: <a asp-page="/">@(boardSpecTopic.Creater?.Username ?? "匿名或已删除")</a> >> @boardSpecTopic.CreatedOn</div>
+                
+            </td>
+            <td class="text-center">
+                @boardSpecTopic.Posts.Count
+            </td>
+            <td >
+                @if (boardSpecTopic.Posts.OrderByDescending(i=>i.CreatedAt).FirstOrDefault() is { } post)
+                {
+                    <div>
+                        By:@(post.Creator?.Username ?? "匿名或已删除") <a asp-page="/Topic" asp-route-topicId="@boardSpecTopic.Id" asp-fragment="@post.Id">前往</a>
+                    </div>
+                    <div class="text-secondary-emphasis">
+                        @@@post.CreatedAt
+                    </div>
+                }
+                else
+                {
+                    <div>版块为空</div>
+                }
+                
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

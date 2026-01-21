@@ -60,15 +60,17 @@ using (var scope = app.Services.CreateScope())
     
         var user = new User
         {
-            Username = "Admin", Password = password.ToSha256String(), Op = true
+            Username = "Admin", Password = password.ToSha256String(), Op = true, Joined =  DateTime.Now,
         }; 
         db.Users.Add(user);
+        Task.Delay(2000).GetAwaiter().GetResult();
         var newBoardGroup = new BoardGroup
         {
             Name = "默认板块",
             CreatedAt = DateTime.Now, CreatedBy = user
         };
         db.BoardGroups.Add(newBoardGroup);
+        Task.Delay(2000).GetAwaiter().GetResult();
         
         
         var newBoard = new Board
@@ -80,12 +82,15 @@ using (var scope = app.Services.CreateScope())
             BoardGroup = newBoardGroup
         };
         db.Boards.Add(newBoard);
+        Task.Delay(2000).GetAwaiter().GetResult();
 
         db.BoardUserOrganizers.Add(new()
         {
             Board = newBoard, Designated = user, Uuid = Guid.NewGuid().ToString(), Since = DateTime.Now,
             Status = BoardUserOrganizer.Role.Admin
         });
+        Task.Delay(2000).GetAwaiter().GetResult();
+        
         var topic = new Topic()
         {
             Title = "测试贴",
@@ -94,16 +99,23 @@ using (var scope = app.Services.CreateScope())
             CreatedOn = DateTime.Now, Creater = user
         };
         db.Topics.Add(topic);
+        Task.Delay(2000).GetAwaiter().GetResult();
+        
         var post = new Post()
         {
             Content = "测试回复呦呦", Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = []
         };
         db.Posts.Add(post);
+        Task.Delay(2000).GetAwaiter().GetResult();
+        
         db.Posts.Add(new()
         {
             Content = "测试回复：测试回复呦呦", Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = [],
             Quotting = [post]
         });
+        Task.Delay(2000).GetAwaiter().GetResult();
+        
+        
         db.SaveChanges();
         
         File.WriteAllText("INIT", password);

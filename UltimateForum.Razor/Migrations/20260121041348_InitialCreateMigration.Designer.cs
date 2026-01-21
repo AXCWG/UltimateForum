@@ -11,14 +11,29 @@ using UltimateForum.Razor.Db;
 namespace UltimateForum.Razor.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    [Migration("20260120081546_4")]
-    partial class _4
+    [Migration("20260121041348_InitialCreateMigration")]
+    partial class InitialCreateMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
+
+            modelBuilder.Entity("PostPost", b =>
+                {
+                    b.Property<long>("Quoted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<long>("Quoter")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Quoted", "Quoter");
+
+                    b.HasIndex("Quoter");
+
+                    b.ToTable("PostPost");
+                });
 
             modelBuilder.Entity("UltimateForum.Db.Models.User", b =>
                 {
@@ -33,6 +48,9 @@ namespace UltimateForum.Razor.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Joined")
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Op")
@@ -158,9 +176,6 @@ namespace UltimateForum.Razor.Migrations
                     b.Property<long>("CreatorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<long?>("PostId")
-                        .HasColumnType("INTEGER");
-
                     b.Property<long>("TopicId")
                         .HasColumnType("INTEGER");
 
@@ -169,8 +184,6 @@ namespace UltimateForum.Razor.Migrations
                     b.HasIndex("Content");
 
                     b.HasIndex("CreatorId");
-
-                    b.HasIndex("PostId");
 
                     b.HasIndex("TopicId");
 
@@ -209,6 +222,21 @@ namespace UltimateForum.Razor.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Topics");
+                });
+
+            modelBuilder.Entity("PostPost", b =>
+                {
+                    b.HasOne("UltimateForum.Razor.Db.Models.Post", null)
+                        .WithMany()
+                        .HasForeignKey("Quoted")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("UltimateForum.Razor.Db.Models.Post", null)
+                        .WithMany()
+                        .HasForeignKey("Quoter")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("UltimateForum.Razor.Db.Models.Board", b =>
@@ -255,10 +283,6 @@ namespace UltimateForum.Razor.Migrations
                         .WithMany("CreatedPosts")
                         .HasForeignKey("CreatorId")
                         .IsRequired();
-
-                    b.HasOne("UltimateForum.Razor.Db.Models.Post", null)
-                        .WithMany("Quotting")
-                        .HasForeignKey("PostId");
 
                     b.HasOne("UltimateForum.Razor.Db.Models.Topic", "Topic")
                         .WithMany("Posts")
@@ -309,11 +333,6 @@ namespace UltimateForum.Razor.Migrations
             modelBuilder.Entity("UltimateForum.Razor.Db.Models.BoardGroup", b =>
                 {
                     b.Navigation("Boards");
-                });
-
-            modelBuilder.Entity("UltimateForum.Razor.Db.Models.Post", b =>
-                {
-                    b.Navigation("Quotting");
                 });
 
             modelBuilder.Entity("UltimateForum.Razor.Db.Models.Topic", b =>

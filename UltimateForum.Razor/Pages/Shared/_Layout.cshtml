@@ -22,7 +22,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <div class="navbar-nav flex-grow-1">
+                <div class="navbar-nav flex-grow-1" id="nav-view">
                     @await RenderSectionAsync("NavView", required: false)
                 </div>
             </div>
@@ -30,7 +30,7 @@
     </nav>
 </header>
 <div class="container">
-    <main role="main" class="pb-3">
+    <main role="main" style="max-width: 60rem"  class="pb-3 mx-auto">
         @RenderBody()
     </main>
 </div>

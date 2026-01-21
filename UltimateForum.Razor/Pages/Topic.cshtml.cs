@@ -2,19 +2,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Razor.Db;
+using UltimateForum.Razor.Db.Models;
 
 namespace UltimateForum.Razor.Pages;
 
 public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext) : PageModel
 {
     [BindProperty(SupportsGet = true)]
-    public int TopicId { get; set; }
+    public int? TopicId { get; set; }
+ 
     public Db.Models.Topic? TopicData { get; set; }
     private readonly ForumDbContext _db = forumDbContext; 
     private readonly BinaryDbContext _binaryDbContext = binaryDbContext;
     public IActionResult OnGet()
     {
-        var s = _db.Topics.Include(i=>i.Creater).Include(i=>i.Posts.OrderBy(i=>i.CreatedAt)).ThenInclude(i=>i.Quotting).FirstOrDefault(i => i.Id == TopicId);
+        if (TopicId is null)
+        {
+            return RedirectToPage("/404");
+        }
+        var s = _db.Topics.Include(i=>i.Creater).Include(i=>i.Board).Include(i=>i.Posts.OrderBy(i=>i.CreatedAt)).ThenInclude(i=>i.Quotting).FirstOrDefault(i => i.Id == TopicId);
         if (s is null)
         {
             return RedirectToPage("/404"); 
@@ -38,5 +44,15 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
     public string? Username(long? userUid)
     {
         return _db.Users.FirstOrDefault(i => i.Id == userUid)?.Username; 
+    }
+
+    public Post? GetPost(long? postId)
+    {
+        if (postId is null)
+        {
+            return null; 
+        }
+
+        return _db.Posts.FirstOrDefault(i => i.Id == postId);
     }
 }

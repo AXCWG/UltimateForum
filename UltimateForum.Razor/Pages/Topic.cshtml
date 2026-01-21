@@ -4,7 +4,19 @@
 @{
     ViewData["Title"] = Model.TopicData?.Title;
 }
-<div style="max-width: 50rem" class="mx-auto">
+@section NavView
+{
+    <a asp-page="/Index" id="index" class="me-2">首页</a>
+    /
+    <a class="ms-2 me-2" id="board" asp-page="/Board" asp-route-boardid="@Model.TopicData?.BoardId">@Model.TopicData?.Board.Name</a>
+    /
+    <a asp-page="/Topic" id="topic" asp-route-topicid="@Model.TopicData?.Id" class="ms-2">@Model.TopicData?.Title</a>
+}
+
+<div style="max-width: 60rem" class="mx-auto">
+    <div class="mb-3">
+        <a asp-page="/Board" asp-route-boardid="@Model.TopicData?.Board.Id"> @{ var e = "<==";<span>@e</span>} @Model.TopicData?.Board.Name</a>
+    </div>
     <div class="d-flex justify-content-between align-items-baseline gap-3">
         <div class="d-flex gap-3">
             <a class="btn btn-primary btn-sm ">发布回复</a>
@@ -20,11 +32,11 @@
                 <div class="d-flex gap-3">
                     <a asp-page="/Login">登录</a>
                     <a asp-page="/Register">注册</a>
-                    
+
                 </div>
-                }
+            }
         </div>
-        
+
     </div>
     <table class=" p-3 table  table-bordered mt-3">
         <tbody class="">
@@ -32,7 +44,7 @@
         <tr class="h-auto">
             <td class="p-3">
                 <div>
-                    <h4 class="p-0 m-0">@Model.TopicData?.Title</h4>
+                    <h2 class="mb-4">@Model.TopicData?.Title</h2>
                     <div class="pb-2" style="font-size: .7rem">作者：
                         @if (Model.TopicData?.Creater?.Username is null)
                         {
@@ -40,18 +52,19 @@
                         }
                         else
                         {
-                            <a asp-page="/">@Model.TopicData.Creater.Username</a><span>@@@Model.TopicData?.CreatedOn</span>
+                            <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                            <span>@@@Model.TopicData?.CreatedOn</span>
                         }
                     </div>
                     <div style="font-size: .9rem">@Model.TopicData?.Content</div>
                 </div>
-                <div style="height: 4rem">
+                <div style="height: 2rem">
 
                 </div>
 
             </td>
             <td class="col-3 ">
-                <div style="font-size: .7rem" class="d-flex flex-column justify-content-center">
+                <div style="font-size: .7rem">
                     @if (Model.TopicData?.Creater is null)
                     {
                         <div>匿名或已删除</div>
@@ -66,6 +79,7 @@
                         }
 
                         <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                        <div class="text-secondary-emphasis">加入：@Model.TopicData.Creater.Joined</div>
                     }
 
 
@@ -76,7 +90,7 @@
         <!-- End Topic View -->
         @foreach (var p in Model.TopicData?.Posts ?? [])
         {
-            <tr class="h-auto">
+            <tr class="h-auto" id="@p.Id">
                 <td class="p-3">
                     <div>
                         <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
@@ -87,7 +101,8 @@
                             }
                             else
                             {
-                                <a asp-page="/">@p.Creator.Username</a><span>@@@p.CreatedAt</span>
+                                <a asp-page="/">@p.Creator.Username</a>
+                                <span>@@@p.CreatedAt</span>
                             }
                         </div>
                         <div style="font-size: .9rem">
@@ -97,34 +112,36 @@
                                 {
                                     <div class="card p-3 mb-2">
                                         <div>
-                                            <span>@if (post.Creator?.Username is null)
-                                                  {
-                                                      <span style="font-size: .7rem">匿名或已删除 @@ @post.CreatedAt > </span>
-                                                  }
-                                                  else
-                                                  {
-                                                      <div style="font-size: .7rem">
-                                                            <div ><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > </div>
-                                                      <div>@post.Content</div>
-                                                      </div>
-                                                    
-                                                  }</span>
+                                            <span>
+                                                @if (post?.Creator?.Username is null)
+                                                {
+                                                    <span style="font-size: .7rem">匿名或已删除 @@ @post?.CreatedAt > </span>
+                                                }
+                                                else
+                                                {
+                                                    <div style="font-size: .7rem">
+                                                        <div ><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > </div>
+                                                        <div>@post.Content</div>
+                                                    </div>
+
+                                                }
+                                            </span>
                                         </div>
                                     </div>
                                 }
 
-                                
+
                             }
                             @p.Content
                         </div>
                     </div>
-                    <div style="height: 4rem">
+                    <div style="height: 2rem">
 
                     </div>
 
                 </td>
                 <td class="col-3 ">
-                    <div style="font-size: .7rem" class="d-flex flex-column justify-content-center">
+                    <div style="font-size: .7rem" >
                         @if (Model.TopicData?.Creater is null)
                         {
                             <div>匿名或已删除</div>
@@ -139,6 +156,7 @@
                             }
 
                             <a asp-page="/">@p.Creator?.Username</a>
+                            <div class="text-secondary-emphasis">加入：@p.Creator?.Joined</div>
                         }
 
 
@@ -150,3 +168,19 @@
         </tbody>
     </table>
 </div>
+
+@section Scripts
+{
+    <script>
+        console.log(location.hash)
+        let id = location.hash.replace("#", ""); 
+        if(id){
+            let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
+            console.log(title);
+            document.getElementById("topic").classList.add("me-2")
+            document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new{TopicId=Model.TopicData?.Id})#${id}'>${title}</a>`
+            console.log(document.getElementById("nav-view").innerHTML)
+        }
+        
+    </script>
+}

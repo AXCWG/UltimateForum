@@ -22,6 +22,7 @@ namespace UltimateForum.Razor.Migrations
                     Password = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: true),
                     AvatarUuid = table.Column<string>(type: "TEXT", nullable: true),
+                    Joined = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Op = table.Column<bool>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -91,8 +92,8 @@ namespace UltimateForum.Razor.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_BoardUserOrganizers_Users_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_BoardUserOrganizers_Users_DesignatedId",
+                        column: x => x.DesignatedId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -158,20 +159,20 @@ namespace UltimateForum.Razor.Migrations
                 name: "PostPost",
                 columns: table => new
                 {
-                    L2R = table.Column<long>(type: "INTEGER", nullable: false),
-                    R2L = table.Column<long>(type: "INTEGER", nullable: false)
+                    Quoted = table.Column<long>(type: "INTEGER", nullable: false),
+                    Quoter = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PostPost", x => new { x.L2R, x.R2L });
+                    table.PrimaryKey("PK_PostPost", x => new { x.Quoted, x.Quoter });
                     table.ForeignKey(
-                        name: "FK_PostPost_Posts_L2R",
-                        column: x => x.L2R,
+                        name: "FK_PostPost_Posts_Quoted",
+                        column: x => x.Quoted,
                         principalTable: "Posts",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PostPost_Posts_R2L",
-                        column: x => x.R2L,
+                        name: "FK_PostPost_Posts_Quoter",
+                        column: x => x.Quoter,
                         principalTable: "Posts",
                         principalColumn: "Id");
                 });
@@ -207,9 +208,9 @@ namespace UltimateForum.Razor.Migrations
                 column: "DesignatedId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PostPost_R2L",
+                name: "IX_PostPost_Quoter",
                 table: "PostPost",
-                column: "R2L");
+                column: "Quoter");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_Content",

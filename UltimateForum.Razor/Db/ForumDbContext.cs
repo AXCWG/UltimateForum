@@ -42,7 +42,9 @@ public class ForumDbContext : DbContext
             .OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<Post>().HasOne(i => i.Creator).WithMany(i => i.CreatedPosts).HasForeignKey(i => i.CreatorId)
             .OnDelete(DeleteBehavior.ClientSetNull);
-        modelBuilder.Entity<Post>().HasMany(i => i.Quotting).WithOne().HasPrincipalKey(i=>i.Id).OnDelete(DeleteBehavior.ClientSetNull); 
+        modelBuilder.Entity<Post>().HasMany(i => i.Quotting).WithMany(i => i.Quotted).UsingEntity(
+            l => l.HasOne(typeof(Post)).WithMany().HasForeignKey("Quoted").OnDelete(DeleteBehavior.NoAction),
+            r => r.HasOne(typeof(Post)).WithMany().HasForeignKey("Quoter").OnDelete(DeleteBehavior.NoAction));
         modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Board).WithMany(i => i.BoardUserOrganizers)
             .HasForeignKey(i => i.BoardId).OnDelete(DeleteBehavior.Cascade);
         modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Designated).WithMany(i => i.BoardUserOrganizers)
