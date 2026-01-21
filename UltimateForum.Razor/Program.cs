@@ -110,8 +110,7 @@ using (var scope = app.Services.CreateScope())
         
         db.Posts.Add(new()
         {
-            Content = "测试回复：测试回复呦呦", Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = [],
-            Quotting = [post]
+            Content = """$$[!quote content="1"]$$ 测试回复：测试回复呦呦 """, Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = [],
         });
         Task.Delay(2000).GetAwaiter().GetResult();
         

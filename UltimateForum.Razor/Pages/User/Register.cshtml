@@ -1,0 +1,30 @@
+@page
+@model Register
+<div class=" mx-auto  d-flex flex-column justify-content-center align-items-center col-6">
+    <div class="w-100">
+        <h1 class="display-4">注册</h1>
+        <div class="card p-4 ">
+            <form method="post">
+                <div class="d-flex flex-column gap-3">
+                    <span class="text-danger" asp-validation-for="Form!.Username" ></span>
+                    <input class="form-control" placeholder="用户名" asp-for="Form!.Username"/>
+                    
+                    <span class="text-danger" asp-validation-for="Form!.Email" ></span>
+                    <input type="email" class="form-control" placeholder="邮箱（可选）" asp-for="Form!.Email"/>
+                    
+                    <span class="text-danger" asp-validation-for="Form!.Password" ></span>
+                    <input type="password" class="form-control" placeholder="密码" asp-for="Form!.Password"/>
+                    
+                    <span class="text-danger" asp-validation-for="Form!.ConfirmPassword" ></span>
+                    <input type="password" class="form-control" placeholder="确认密码" asp-for="Form!.ConfirmPassword"/>
+                    <button class="btn btn-primary" type="submit" asp-page-handler="Register">注册</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+    
+</div>
+
+<partial name="Validation"/>

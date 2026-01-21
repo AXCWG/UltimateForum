@@ -1,8 +1,5 @@
 ﻿@page
 @using AXHelper.Extensions
-@using UltimateForum.Db.Models
-@using UltimateForum.Razor.Db.Models
-@using UltimateForum.Razor.Pages.User
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -25,7 +22,7 @@
                     <input placeholder="密码" class="form-control"  asp-for="@Model.Password" type="password"/>
                     <div class="d-flex flex-row gap-1">
                         <button class="flex-grow-1 btn btn-primary" type="submit"  asp-page-handler="Login">登录</button>
-                        <button class="flex-grow-1 btn btn-secondary">注册...</button>
+                        <a class="flex-grow-1 btn btn-secondary" asp-page="/User/Register">注册...</a>
                     </div>
                 </div>
             </form>
@@ -38,7 +35,7 @@
                 <form method="post">
                     <div class="d-flex flex-row gap-2">
                         <button class="btn btn-danger" type="submit" asp-page-handler="Logout">登出</button>
-                        <a class="btn btn-primary"  asp-page="/User/ChangePassword">更改密码</a>
+                        <a class="btn btn-primary"  asp-page="/User/Home">个人页</a>
                         
                     </div> 
                     
@@ -52,7 +49,7 @@
 </div>
 <div style="max-width: 60rem" class="row mt-4 mx-auto">
     <table class="table table-bordered" id="boards">
-        <thead>
+        <thead >
         <tr>
             <td class="col-8">
                 <div class="d-flex flex-row justify-content-between">

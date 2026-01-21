@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,11 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
     public int? TopicId { get; set; }
  
     public Db.Models.Topic? TopicData { get; set; }
-    private readonly ForumDbContext _db = forumDbContext; 
+    private readonly ForumDbContext _db = forumDbContext;
+    /// <summary>
+    /// Use with caution.
+    /// </summary>
+    public ForumDbContext DbContext => _db; 
     private readonly BinaryDbContext _binaryDbContext = binaryDbContext;
     public IActionResult OnGet()
     {
@@ -20,7 +25,7 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
         {
             return RedirectToPage("/404");
         }
-        var s = _db.Topics.Include(i=>i.Creater).Include(i=>i.Board).Include(i=>i.Posts.OrderBy(i=>i.CreatedAt)).ThenInclude(i=>i.Quotting).FirstOrDefault(i => i.Id == TopicId);
+        var s = _db.Topics.Include(i=>i.Creater).Include(i=>i.Board).Include(i=>i.Posts.OrderBy(i=>i.CreatedAt)).ThenInclude(i=>i.Creator).FirstOrDefault(i => i.Id == TopicId);
         if (s is null)
         {
             return RedirectToPage("/404"); 

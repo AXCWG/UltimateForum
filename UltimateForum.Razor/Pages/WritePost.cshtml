@@ -1,0 +1,141 @@
+@page
+@using System.Text.RegularExpressions
+@using AXHelper.Extensions
+@using UltimateForum.Razor.Pages.Shared
+@model UltimateForum.Razor.Pages.WritePost
+
+<div class="display-6">发布回复</div>
+<form style="max-width: 35rem" class="card w-auto d-block mt-2 p-3 bg-dark-subtle gap-2" method="post" asp-page-handler="PostPost" asp-route-topicid="@Model.TopicId">
+    <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
+    <textarea style="resize: none;height: 10rem" class="form-control mt-2" asp-for="@Model.Content" id="text">
+        
+    </textarea>
+    <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
+</form>
+
+<table class=" p-3 table  table-bordered mt-3">
+    <tbody class="">
+    <!-- Topic View -->
+    <tr class="h-auto">
+        <td class="p-3">
+            <div>
+                <h2 class="mb-4">@Model.TopicData?.Title</h2>
+                <div class="pb-2" style="font-size: .7rem">作者：
+                    @if (Model.TopicData?.Creater?.Username is null)
+                    {
+                        <span>未知或已删除@@@Model.TopicData?.CreatedOn</span>
+                    }
+                    else
+                    {
+                        <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                        <span>@@@Model.TopicData?.CreatedOn</span>
+                    }
+                </div>
+                <div style="font-size: .9rem">@Model.TopicData?.Content</div>
+            </div>
+            <div style="height: 2rem">
+
+            </div>
+
+        </td>
+        <td class="col-3 ">
+            <div style="font-size: .7rem">
+                @if (Model.TopicData?.Creater is null)
+                {
+                    <div>匿名或已删除</div>
+                }
+                else
+                {
+                    @if (Model.TopicData.Creater.AvatarUuid is not null)
+                    {
+                        <img class="img-fluid"
+                             src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                             style="width: 2rem;height: 2rem;" alt="avatar"/>
+                    }
+
+                    <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                    <div class="text-secondary-emphasis">加入：@Model.TopicData.Creater.Joined</div>
+                }
+
+
+            </div>
+
+        </td>
+    </tr>
+    <!-- End Topic View -->
+    @foreach (var p in Model.TopicData?.Posts ?? [])
+    {
+        <tr class="h-auto" id="@p.Id">
+            <td class="p-3">
+                <div>
+                    <div class="p-0 m-0 d-flex justify-content-between"><span>Re：@Model.TopicData?.Title</span><button onclick='(()=>{
+                        document.getElementById("text").value +="\n$$[!quote content=\"@p.Id\"]$$\n";
+                    })()'>引用</button></div>
+                    <div class="pb-2" style="font-size: .7rem">作者：
+                        @if (p.Creator is null)
+                        {
+                            <span>匿名或已删除@@@p.CreatedAt</span>
+                        }
+                        else
+                        {
+                            <a asp-page="/">@p.Creator.Username</a>
+                            <span>@@@p.CreatedAt</span>
+                        }
+                    </div>
+                    <div style="font-size: .9rem">
+                        @if (Regex.Matches(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$").Count == 0)
+                        {
+                            @p.Content
+                        }
+                        else
+                        {
+                            var stuffs = Helper.SplitWithDelimiter(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+                            foreach (var stuff in stuffs)
+                            {
+                                if (Helper.Evaluate(stuff) is Helper.TagType.Quote)
+                                {
+                                    <partial name="Shared/RenderQuote" model="new RenderQuote(Model.Db, Helper.GetQuoteId(stuff))"/>
+                                }
+                                else
+                                {
+                                    <span>@stuff</span>
+                                     
+                                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div style="height: 2rem">
+
+                </div>
+
+            </td>
+            <td class="col-3 ">
+                <div style="font-size: .7rem" >
+                    @if (Model.TopicData?.Creater is null)
+                    {
+                        <div>匿名或已删除</div>
+                    }
+                    else
+                    {
+                        @if (Model.TopicData.Creater.AvatarUuid is not null)
+                        {
+                            <img class="img-fluid"
+                                 src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                                 style="width: 2rem;height: 2rem;" alt="avatar"/>
+                        }
+
+                        <a asp-page="/">@p.Creator?.Username</a>
+                        <div class="text-secondary-emphasis">加入：@p.Creator?.Joined</div>
+                    }
+
+
+                </div>
+
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<partial name="Validation"/>

@@ -1,4 +1,7 @@
 @page
+@using System.Text.RegularExpressions
+@using UltimateForum.Razor.Db.Models
+@using UltimateForum.Razor.Pages.Shared
 @using UltimateForum.Razor.Pages.User
 @model UltimateForum.Razor.Pages.Topic
 @{
@@ -19,13 +22,13 @@
     </div>
     <div class="d-flex justify-content-between align-items-baseline gap-3">
         <div class="d-flex gap-3">
-            <a class="btn btn-primary btn-sm ">发布回复</a>
+            <a class="btn btn-primary btn-sm " asp-page="/WritePost" asp-route-topicid="@Model.TopicId">发布回复</a>
             <input placeholder="搜索" class="form-control form-control-sm w-auto"/>
         </div>
         <div>
             @if (Model.Username(HttpContext.Session.GetLong("uid")) is not null)
             {
-                <a asp-page="/">@Model.Username(HttpContext.Session.GetLong("uid"))</a>
+                <a asp-page="/User/Home">@Model.Username(HttpContext.Session.GetLong("uid"))</a>
             }
             else
             {
@@ -106,33 +109,26 @@
                             }
                         </div>
                         <div style="font-size: .9rem">
-                            @if (p.Quotting.Count != 0)
-                            {
-                                @foreach (var post in p.Quotting)
-                                {
-                                    <div class="card p-3 mb-2">
-                                        <div>
-                                            <span>
-                                                @if (post?.Creator?.Username is null)
-                                                {
-                                                    <span style="font-size: .7rem">匿名或已删除 @@ @post?.CreatedAt > </span>
-                                                }
-                                                else
-                                                {
-                                                    <div style="font-size: .7rem">
-                                                        <div ><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > </div>
-                                                        <div>@post.Content</div>
-                                                    </div>
-
-                                                }
-                                            </span>
-                                        </div>
-                                    </div>
-                                }
-
-
-                            }
+                         @if (Regex.Matches(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$").Count == 0)
+                         {
                             @p.Content
+                         }
+                         else
+                         {
+                             var stuffs = Helper.SplitWithDelimiter(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+                             foreach (var stuff in stuffs)
+                             {
+                                 if (Helper.Evaluate(stuff) is Helper.TagType.Quote)
+                                 {
+                                     <partial name="Shared/RenderQuote" model="new RenderQuote(Model.DbContext, Helper.GetQuoteId(stuff))"/>
+                                 }
+                                 else
+                                 {
+                                    <span>@stuff</span>
+                                     
+                                 }
+                             }
+                         }
                         </div>
                     </div>
                     <div style="height: 2rem">
@@ -142,20 +138,20 @@
                 </td>
                 <td class="col-3 ">
                     <div style="font-size: .7rem" >
-                        @if (Model.TopicData?.Creater is null)
+                        @if (p.Creator is null)
                         {
                             <div>匿名或已删除</div>
                         }
                         else
                         {
-                            @if (Model.TopicData.Creater.AvatarUuid is not null)
+                            @if (p.Creator.AvatarUuid is not null)
                             {
                                 <img class="img-fluid"
-                                     src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                                     src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
                                      style="width: 2rem;height: 2rem;" alt="avatar"/>
                             }
 
-                            <a asp-page="/">@p.Creator?.Username</a>
+                            <a asp-page="/">@p.Creator.Username</a>
                             <div class="text-secondary-emphasis">加入：@p.Creator?.Joined</div>
                         }
 
@@ -172,15 +168,14 @@
 @section Scripts
 {
     <script>
-        console.log(location.hash)
-        let id = location.hash.replace("#", ""); 
-        if(id){
-            let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
-            console.log(title);
-            document.getElementById("topic").classList.add("me-2")
-            document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new{TopicId=Model.TopicData?.Id})#${id}'>${title}</a>`
-            console.log(document.getElementById("nav-view").innerHTML)
-        }
         
+            let id = location.hash.replace("#", "");
+            if(id){
+                let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
+                console.log(title);
+                document.getElementById("topic").classList.add("me-2");
+                document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new{TopicId=Model.TopicData?.Id})#${id}'>${title}</a>`;
+                console.log(document.getElementById("nav-view").innerHTML);
+            }
     </script>
 }

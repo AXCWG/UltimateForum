@@ -1,6 +1,6 @@
 ﻿@inject IConfiguration Config
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en" data-bs-theme="auto">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,14 +9,19 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/UltimateForum.Razor.styles.css" asp-append-version="true"/>
-    
+    <script>
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+            document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+        })
+        document.documentElement.setAttribute('data-bs-theme', (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'))
+    </script>
     
 </head>
 <body>
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm  border-bottom box-shadow mb-3">
         <div class="container">
-            <a class="navbar-brand" asp-area="" asp-page="/Index">UltimateForum.Razor</a>
+            <a class="navbar-brand" asp-area="" asp-page="/Index">@Config["ForumName"]</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>

@@ -1,0 +1,47 @@
+@using System.Text.RegularExpressions
+@model UltimateForum.Razor.Pages.Shared.RenderQuote
+
+@{
+    var post = Model.GetPost(Model.Id);
+    <div class="card p-3 mb-2 mt-2 bg-light-subtle">
+        <div>
+                                                <span>
+                                                    @if (post?.Creator?.Username is null)
+                                                    {
+                                                        <span
+                                                            style="font-size: .7rem">匿名或已删除 @@ @post?.CreatedAt > </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div style="font-size: .7rem">
+                                                            <div><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > <a
+                                                                    href="#@post.Id">Goto...</a></div> 
+                                                            <div>
+                                                                @{
+                                                                    @if (Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").Count == 0)
+                                                                    {
+                                                                        @post.Content
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        var stuffs = Helper.SplitWithDelimiterTrim(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+                                                                        foreach (var stuff in stuffs)
+                                                                        {
+                                                                            if (Helper.Evaluate(stuff) is Helper.TagType.Quote)
+                                                                            {
+                                                                                // await Quote(Model.GetQuoteId(stuff));
+                                                                                <partial name="RenderQuote" model="new RenderQuote(Model.Db, Helper.GetQuoteId(stuff))"/>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <span>@stuff</span>
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </span>
+        </div>
+    </div>}

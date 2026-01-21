@@ -155,28 +155,6 @@ namespace UltimateForum.Razor.Migrations
                         principalColumn: "Id");
                 });
 
-            migrationBuilder.CreateTable(
-                name: "PostPost",
-                columns: table => new
-                {
-                    Quoted = table.Column<long>(type: "INTEGER", nullable: false),
-                    Quoter = table.Column<long>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PostPost", x => new { x.Quoted, x.Quoter });
-                    table.ForeignKey(
-                        name: "FK_PostPost_Posts_Quoted",
-                        column: x => x.Quoted,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_PostPost_Posts_Quoter",
-                        column: x => x.Quoter,
-                        principalTable: "Posts",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_BoardGroups_CreatedById",
                 table: "BoardGroups",
@@ -206,11 +184,6 @@ namespace UltimateForum.Razor.Migrations
                 name: "IX_BoardUserOrganizers_DesignatedId",
                 table: "BoardUserOrganizers",
                 column: "DesignatedId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PostPost_Quoter",
-                table: "PostPost",
-                column: "Quoter");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Posts_Content",
@@ -254,9 +227,6 @@ namespace UltimateForum.Razor.Migrations
         {
             migrationBuilder.DropTable(
                 name: "BoardUserOrganizers");
-
-            migrationBuilder.DropTable(
-                name: "PostPost");
 
             migrationBuilder.DropTable(
                 name: "Posts");
