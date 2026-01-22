@@ -5,13 +5,68 @@
 @model UltimateForum.Razor.Pages.WritePost
 
 <div class="display-6">发布回复</div>
-<form style="max-width: 35rem" class="card w-auto d-block mt-2 p-3 bg-dark-subtle gap-2" method="post" asp-page-handler="PostPost" asp-route-topicid="@Model.TopicId">
-    <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
-    <textarea style="resize: none;height: 10rem" class="form-control mt-2" asp-for="@Model.Content" id="text">
+<div style="max-width: 35rem" class="card w-auto d-block mt-2 p-3 bg-dark-subtle gap-2">
+    <div class="dropdown">
+        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+            Dropdown form
+        </button>
+        <div class="dropdown-menu p-0">
+            <div class=" gap-2 p-3">
+                @{
+                    var g = Model.IconPackHelperService.GetAllIcons().Chunk(200).ToArray();
+                    <div  style="max-width: 40rem;">
+                        <ul class="nav nav-tabs " style="flex-wrap: nowrap;overflow: scroll;scrollbar-width: thin" id="emote" role="tablist">
+                            @for (var i = 1; i < g.Length-1; i++)
+                            {
+                                <li class="nav-item" role="presentation">
+                                    <button  style="height: 3rem;" class=" nav-link @(i == 1 ? "active" : "")"
+                                            id="emote-@i-tab" data-bs-toggle="tab" data-bs-target="#emote-@i-tab-pane"
+                                            type="button" role="tab" aria-controls="home-tab-pane">
+                                        <div class="d-flex justify-content-center align-items-center gap-2">
+                                            <span>@i</span>
+                                            <img style="width: 1.3rem;height: 1.3rem" src="@Url.Content("~/" + g[i][0].Value)" alt="@g[i][0].Value"/>
+                                        </div>
+                                    </button>
+                                </li>
+                            }
+                                           
+                        </ul>
+                    </div>
+                    
+                    <div class="tab-content" id="emoteContent">
+                        @for (var i = 1; i < g.Length-1; i++)
+                        {
+                            <div class="tab-pane fade @(i == 1 ? "show active" : "")" id="emote-@i-tab-pane" role="tabpanel" tabindex="0">
+                                <div class="">
+                                    @foreach (var e in g[i])
+                                    {
+                                        <button onclick='(()=>{
+                                        document.getElementById("text").value += "$$[!icon ico=\"@e.Key\"]$$"
+                                    })()' class="btn p-0" style="width: 2rem;height: 2rem;background-image: url('@Url.Content("~/" + e.Value)');background-size: contain"></button>
+                                    }
+                                </div>
+                                
+                            </div>
+                            
+                        }
+                    </div>
+                }
+                
+                
+            </div>
+            
+        </div>
+    </div>
+    
+    <form method="post" asp-page-handler="PostPost" asp-route-topicid="@Model.TopicId">
+        <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
+        <textarea style="resize: none;height: 10rem" class="form-control mt-2" asp-for="@Model.Content" id="text">
         
     </textarea>
-    <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
-</form>
+        <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
+    </form>
+</div>
+
 
 <table class=" p-3 table  table-bordered mt-3">
     <tbody class="">
@@ -69,40 +124,16 @@
             <td class="p-3">
                 <div>
                     <div class="p-0 m-0 d-flex justify-content-between"><span>Re：@Model.TopicData?.Title</span><button onclick='(()=>{
-                        document.getElementById("text").value +="\n$$[!quote content=\"@p.Id\"]$$\n";
+                        document.getElementById("text").value +="$$[!quote content=\"@p.Id\"]$$";
                     })()'>引用</button></div>
                     <div class="pb-2" style="font-size: .7rem">作者：
-                        @if (p.Creator is null)
-                        {
-                            <span>匿名或已删除@@@p.CreatedAt</span>
-                        }
-                        else
-                        {
+                        
                             <a asp-page="/">@p.Creator.Username</a>
                             <span>@@@p.CreatedAt</span>
-                        }
+                        
                     </div>
                     <div style="font-size: .9rem">
-                        @if (Regex.Matches(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$").Count == 0)
-                        {
-                            @p.Content
-                        }
-                        else
-                        {
-                            var stuffs = Helper.SplitWithDelimiter(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
-                            foreach (var stuff in stuffs)
-                            {
-                                if (Helper.Evaluate(stuff) is Helper.TagType.Quote)
-                                {
-                                    <partial name="Shared/RenderQuote" model="new RenderQuote(Model.Db, Helper.GetQuoteId(stuff))"/>
-                                }
-                                else
-                                {
-                                    <span>@stuff</span>
-                                     
-                                }
-                            }
-                        }
+                        <partial name="Shared/RenderPost" model="new RenderPost { DbContext = Model.Db, Content = p.Content }"/>
                     </div>
                 </div>
                 <div style="height: 2rem">

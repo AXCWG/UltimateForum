@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using AXHelper.Extensions;
 
 namespace UltimateForum.Razor;
 
@@ -24,7 +25,7 @@ public static class Helper
         return TagType.None;
     }
 
-    public static long GetQuoteId(string tag)
+    public static long GetQuoteIdFromTag(string tag)
     {
         var ts = tag.ToLowerInvariant().Split(" ", StringSplitOptions.TrimEntries);
         foreach (var se in ts.Where(i=>i.Contains('=')))
@@ -51,9 +52,33 @@ public static class Helper
         throw new InvalidOperationException();
     }
 
+    public static string GetIconIdFromTag(string tag)
+    {
+        var ts = tag.ToLowerInvariant().Split(" ", StringSplitOptions.TrimEntries);
+        foreach (var se in ts.Where(i=>i.Contains('=')))
+        {
+            var tt = se.Split(['\"', '\''], StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            for (var i = 0; i < tt.Length; i++)
+            {
+                if (tt[i] == "ico=")
+                {
+                    return tt[i+1];
+                }
+                
+            }
+            
+        }
+
+        throw new InvalidOperationException();
+    }
+
     public static List<string> SplitWithDelimiter(string source, string regex)
     {
         var m = Regex.Matches(source, regex).Select(i => i).ToList();
+        if (m.Count == 0)
+        {
+            return [source];
+        }
         var res = new List<string>();
         int start = 0;
         for (var i =0; i < m.Count(); i++)
@@ -70,8 +95,9 @@ public static class Helper
             {
                 res.Add(e);
             }
-            start = source.IndexOf(res.Last(), StringComparison.InvariantCulture) + res.Last().Length;
+            start = res.Sum(i=>i.Length) ;
         }
+        Console.WriteLine(res.Serialize());
 
         return res;
     }

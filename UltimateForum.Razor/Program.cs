@@ -3,6 +3,7 @@ using AXHelper.Helpers;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Db;
 using UltimateForum.Db.Models;
+using UltimateForum.Razor;
 using UltimateForum.Razor.Db;
 using UltimateForum.Razor.Db.Models;
 
@@ -18,7 +19,7 @@ builder.Services.AddMemoryCache();
 switch (builder.Configuration["DbType"])
 {
     case "sqlite":
-        builder.Services.AddDbContext<ForumDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
+        builder.Services.AddDbContext<ForumDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"), o=>o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         break;
     case "mysql":
         throw new NotImplementedException();
@@ -30,6 +31,9 @@ using (var db = new BinaryDbContext(builder.Configuration.GetConnectionString("B
     db.Database.EnsureCreated();
 }
 builder.Services.AddDbContext<BinaryDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("BinaryConnection")));
+
+builder.Services.AddScoped<OpenMojiIconPackHelperService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -57,7 +61,12 @@ using (var scope = app.Services.CreateScope())
     if (!File.Exists("INIT"))
     {
         var password = StringHelper.RandomString(8);
-    
+
+        var anon = new User
+        {
+            Username = "ANONYMOUS", Password = password.ToSha256String(), Op = false, Joined = DateTime.Now
+        };
+        db.Users.Add(anon);
         var user = new User
         {
             Username = "Admin", Password = password.ToSha256String(), Op = true, Joined =  DateTime.Now,

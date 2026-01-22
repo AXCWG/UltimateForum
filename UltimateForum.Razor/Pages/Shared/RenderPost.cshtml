@@ -1,0 +1,47 @@
+@model RenderPost
+@inject OpenMojiIconPackHelperService OpemMojiIconPack
+@{
+    // Messy shit. 
+    var stuffs = Helper.SplitWithDelimiter(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+    for (var index = 0; index < stuffs.Count; index++)
+    {
+        var stuff = stuffs[index];
+        switch (Helper.Evaluate(stuff))
+        {
+            case Helper.TagType.Quote:
+                <partial name="Shared/RenderQuote"
+                         model="new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff))"/>
+                break;
+            case Helper.TagType.Icon:
+                try
+                {
+                    @Html.Raw(Markdig.Markdown.ToHtml($"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>"))
+                }
+                catch (Exception)
+                {
+                    //ignored
+                }
+
+                break;
+            default: // Continuity for stuff appending after text. 
+                try
+                {
+                    switch (Helper.Evaluate(stuffs[index + 1]))
+                    {
+                        case Helper.TagType.Icon:
+                            @Html.Raw(Markdig.Markdown.ToHtml(stuff + $"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuffs[index + 1]))}'/>"))
+                            index++;
+                            goto OUTER_BREAK;
+                    }
+                }
+                catch (Exception)
+                {
+                    //ignored
+                }
+
+                @Html.Raw(Markdig.Markdown.ToHtml(stuff))
+                OUTER_BREAK:
+                break;
+        }
+    }
+}

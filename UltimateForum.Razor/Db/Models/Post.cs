@@ -18,7 +18,7 @@ public class Post
     public long TopicId { get; set; }
 
    
-    public User? Creator { get; set; }
+    public required User Creator { get; set; }
     public long CreatorId { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required List<string> AttachmentUuid { get; set; }

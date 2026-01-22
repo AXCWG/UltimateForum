@@ -1,24 +1,33 @@
 @page
-@using System.Text.RegularExpressions
-@using UltimateForum.Razor.Db.Models
 @using UltimateForum.Razor.Pages.Shared
 @using UltimateForum.Razor.Pages.User
 @model UltimateForum.Razor.Pages.Topic
 @{
     ViewData["Title"] = Model.TopicData?.Title;
 }
+
 @section NavView
 {
     <a asp-page="/Index" id="index" class="me-2">首页</a>
     /
-    <a class="ms-2 me-2" id="board" asp-page="/Board" asp-route-boardid="@Model.TopicData?.BoardId">@Model.TopicData?.Board.Name</a>
+    <a class="ms-2 me-2" id="board" asp-page="/Board"
+       asp-route-boardid="@Model.TopicData?.BoardId">@Model.TopicData?.Board.Name</a>
     /
     <a asp-page="/Topic" id="topic" asp-route-topicid="@Model.TopicData?.Id" class="ms-2">@Model.TopicData?.Title</a>
 }
 
+<style>
+    p {
+        margin: 0;
+    }
+</style>
 <div style="max-width: 60rem" class="mx-auto">
     <div class="mb-3">
-        <a asp-page="/Board" asp-route-boardid="@Model.TopicData?.Board.Id"> @{ var e = "<==";<span>@e</span>} @Model.TopicData?.Board.Name</a>
+        <a asp-page="/Board" asp-route-boardid="@Model.TopicData?.Board.Id"> @{
+                var e = "<==";
+                <span>@e</span>
+            }
+            @Model.TopicData?.Board.Name</a>
     </div>
     <div class="d-flex justify-content-between align-items-baseline gap-3">
         <div class="d-flex gap-3">
@@ -49,7 +58,7 @@
                 <div>
                     <h2 class="mb-4">@Model.TopicData?.Title</h2>
                     <div class="pb-2" style="font-size: .7rem">作者：
-                        @if (Model.TopicData?.Creater?.Username is null)
+                        @if (Model.TopicData?.Creater.Username is null)
                         {
                             <span>未知或已删除@@@Model.TopicData?.CreatedOn</span>
                         }
@@ -98,37 +107,13 @@
                     <div>
                         <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
                         <div class="pb-2" style="font-size: .7rem">作者：
-                            @if (p.Creator is null)
-                            {
-                                <span>匿名或已删除@@@p.CreatedAt</span>
-                            }
-                            else
-                            {
-                                <a asp-page="/">@p.Creator.Username</a>
-                                <span>@@@p.CreatedAt</span>
-                            }
+
+                            <a asp-page="/">@p.Creator.Username</a>
+                            <span>@@@p.CreatedAt</span>
+
                         </div>
-                        <div style="font-size: .9rem">
-                         @if (Regex.Matches(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$").Count == 0)
-                         {
-                            @p.Content
-                         }
-                         else
-                         {
-                             var stuffs = Helper.SplitWithDelimiter(p.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
-                             foreach (var stuff in stuffs)
-                             {
-                                 if (Helper.Evaluate(stuff) is Helper.TagType.Quote)
-                                 {
-                                     <partial name="Shared/RenderQuote" model="new RenderQuote(Model.DbContext, Helper.GetQuoteId(stuff))"/>
-                                 }
-                                 else
-                                 {
-                                    <span>@stuff</span>
-                                     
-                                 }
-                             }
-                         }
+                        <div style="font-size: .9rem; ">
+                            <partial name="Shared/RenderPost" model="new RenderPost { DbContext = Model.DbContext, Content = p.Content }"/>
                         </div>
                     </div>
                     <div style="height: 2rem">
@@ -137,23 +122,16 @@
 
                 </td>
                 <td class="col-3 ">
-                    <div style="font-size: .7rem" >
-                        @if (p.Creator is null)
+                    <div style="font-size: .7rem">
+                        @if (p.Creator.AvatarUuid is not null)
                         {
-                            <div>匿名或已删除</div>
+                            <img class="img-fluid"
+                                 src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
+                                 style="width: 2rem;height: 2rem;" alt="avatar"/>
                         }
-                        else
-                        {
-                            @if (p.Creator.AvatarUuid is not null)
-                            {
-                                <img class="img-fluid"
-                                     src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
-                                     style="width: 2rem;height: 2rem;" alt="avatar"/>
-                            }
 
-                            <a asp-page="/">@p.Creator.Username</a>
-                            <div class="text-secondary-emphasis">加入：@p.Creator?.Joined</div>
-                        }
+                        <a asp-page="/">@p.Creator.Username</a>
+                        <div class="text-secondary-emphasis">加入：@p.Creator.Joined</div>
 
 
                     </div>
@@ -168,14 +146,14 @@
 @section Scripts
 {
     <script>
-        
-            let id = location.hash.replace("#", "");
-            if(id){
-                let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
-                console.log(title);
-                document.getElementById("topic").classList.add("me-2");
-                document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new{TopicId=Model.TopicData?.Id})#${id}'>${title}</a>`;
-                console.log(document.getElementById("nav-view").innerHTML);
-            }
+
+        let id = location.hash.replace("#", "");
+        if (id) {
+            let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
+            console.log(title);
+            document.getElementById("topic").classList.add("me-2");
+            document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new { TopicId = Model.TopicData?.Id })#${id}'>${title}</a>`;
+            console.log(document.getElementById("nav-view").innerHTML);
+        }
     </script>
 }

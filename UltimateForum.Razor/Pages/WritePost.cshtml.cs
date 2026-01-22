@@ -9,9 +9,10 @@ using UltimateForum.Razor.Pages.User;
 
 namespace UltimateForum.Razor.Pages;
 
-public class WritePost(ForumDbContext db, IConfiguration config) : PageModel
+public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPackHelperService iconPackHelperService) : PageModel
 {
     private readonly ForumDbContext _db = db;
+    public readonly OpenMojiIconPackHelperService IconPackHelperService = iconPackHelperService;
     /// <summary>
     /// Use with caution. 
     /// </summary>
@@ -40,6 +41,10 @@ public class WritePost(ForumDbContext db, IConfiguration config) : PageModel
             return NotFound();
         }
 
+        if (_config["AllowAnonymousPost"] != "True" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
+        {
+            return RedirectToPage("/Index"); 
+        }
         TopicData = _db.Topics.Include(i=>i.Creater).Include(i=>i.Posts).ThenInclude(i=>i.Creator).First(i => i.Id == TopicId);
         return Page(); 
     }
@@ -67,7 +72,7 @@ public class WritePost(ForumDbContext db, IConfiguration config) : PageModel
         {
             Content = Content,
             Topic = firstOrDefault ?? throw new InvalidOperationException(),
-            AttachmentUuid = [], CreatedAt = DateTime.Now, Creator = u
+            AttachmentUuid = [], CreatedAt = DateTime.Now, Creator = u ?? _db.Users.Find((long)1)!
         });
         _db.SaveChanges();
         return RedirectToPage("/Topic", new{TopicId});
