@@ -1,58 +1,67 @@
 @using System.Text.RegularExpressions
+@using CsharpToColouredHTML.Core.Emitters.HTML
+@using Markdig
+@using Markdown.ColorCode
+@using System.Xml.Linq
+@using Markdown.ColorCode.CSharpToColoredHtml
 @model UltimateForum.Razor.Pages.Shared.RenderQuote
-
+@inject OpenMojiIconPackHelperService OpenMojiIconPack
 @{
     var post = Model.GetPost(Model.Id);
     <div class="card p-3 mb-2 mt-2 bg-light-subtle">
         <div>
-             <span>
-                 @if (post?.Creator?.Username is null)
-                 {
-                     <span
-                         style="font-size: .7rem">匿名或已删除 @@ @post?.CreatedAt > </span>
-                 }
-                 else
-                 {
-                     <div style="font-size: .7rem">
-                         <div><a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > <a
-                                 href="#@post.Id">GOTO</a></div> 
-                         <div>
-                             @{
-                                 var stuffs = Helper.SplitWithDelimiter(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
-                                 for (var index = 0; index < stuffs.Count; index++)
-                                 {
-                                     var stuff = stuffs[index];
-                                     switch (Helper.Evaluate(stuff))
-                                     {
-                                         case Helper.TagType.Quote:
-                                             <partial name="Shared/RenderQuote"
-                                                      model="new RenderQuote(Model.Db, Helper.GetQuoteIdFromTag(stuff))"/>
-                                             break;
-                                         default:
-                                             try
-                                             {
-                                                 switch (Helper.Evaluate(stuffs[index + 1]))
-                                                 {
-                                                     case Helper.TagType.Icon:
-                                                         @Html.Raw(Markdig.Markdown.ToHtml(stuff + $"<img style='height: .9rem;' src='{Url.Content("~/assets/blank.png")}'/>"))
-                                                         index++;
-                                                         goto OUTER_BREAK;
-                                                 }
-                                             }
-                                             catch (Exception)
-                                             {
-                                                 //ignored
-                                             }
+            @if (post?.Creator?.Username is null)
+            {
+                <span style="font-size: .7rem">已删除 @@ @post?.CreatedAt > </span>
+            }
+            else
+            {
+                <div style="font-size: .7rem">
+                    <div>
+                        <a asp-page="/">@post.Creator.Username@@@post.CreatedAt</a> > <a href="#@post.Id">GOTO</a>
+                    </div>
+                    <div>
+                        @{
+                            var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
+                            var stuffs = Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
+                            var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
+                            string withoutTag = post.Content;
+                            for (var i = 0; i < stuffs.Count; i++)
+                            {
+                                withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
+                            }
+                            var mds = Markdig.Markdown.ToHtml(withoutTag, p);
+                            post.Content = mds;
+                            for (var i = 0; i < stuffs.Count; i++)
+                            {
+                                post.Content = post.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
+                            }
+                            var tags = Helper.SplitWithDelimiter(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+                            foreach (var stuff in tags)
+                            {
+                                switch (Helper.Evaluate(stuff))
+                                {
+                                    case Helper.TagType.Icon:
+                                        post.Content = post.Content.Replace(stuff, $"<img style='height: .9rem;' src='{OpenMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>");
+                                        break;
+                                    case Helper.TagType.Quote:
+                                        // <partial name="Shared/RenderQuote"
+                                        //          model="new RenderQuote(Model.Db, Helper.GetQuoteIdFromTag(stuff))" />
+                                        using (var w = new StringWriter())
+                                        {
+                                            (await Html.PartialAsync("Shared/RenderQuote", new RenderQuote(Model.Db, Helper.GetQuoteIdFromTag(stuff)))).WriteTo(w, HtmlEncoder);
+                                            post.Content = post.Content.Replace(stuff, XElement.Parse(w.ToString()).ToString());
+                                        }
+                                        break;
+                                    default:
+                                        break;
 
-                                             @Html.Raw(Markdig.Markdown.ToHtml(stuff))
-                                             OUTER_BREAK:
-                                             break;
-                                     }
-                                 }
-                             }
-                         </div>
-                     </div>
-                 }
-             </span>
+                                }
+                            }
+                            @Html.Raw(post.Content)
+                        }
+                    </div>
+                </div>
+            }
         </div>
     </div>}

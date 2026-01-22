@@ -1,47 +1,100 @@
+@using AXHelper.Extensions
+@using Markdig
+@using Markdown.ColorCode
+@using System.Xml.Linq
+@using System.Text.RegularExpressions
 @model RenderPost
 @inject OpenMojiIconPackHelperService OpemMojiIconPack
 @{
-    // Messy shit. 
-    var stuffs = Helper.SplitWithDelimiter(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
-    for (var index = 0; index < stuffs.Count; index++)
+    // Safe render markdown
+    var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
+    var stuffs = Regex.Matches(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
+    var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
+    string withoutTag = Model.Content;
+    for (var i = 0; i < stuffs.Count; i++)
     {
-        var stuff = stuffs[index];
+        withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
+    }
+    var mds = Markdig.Markdown.ToHtml(withoutTag, p);
+    Model.Content = mds; 
+    for(var i = 0; i < stuffs.Count; i++)
+    {
+        Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
+    }
+    var preTags = Regex.Matches(Model.Content, "<pre>([\\S\\s]*)</pre>");
+    for(var i =0; i < preTags.Count; i++)
+    {
+        Model.Content = Model.Content.Replace(preTags[i].Value, $"{randomStr}{i}{randomStr}");
+    }
+    var tags = Helper.SplitWithDelimiter(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
+
+    foreach(var stuff in tags)
+    {
         switch (Helper.Evaluate(stuff))
         {
-            case Helper.TagType.Quote:
-                <partial name="Shared/RenderQuote"
-                         model="new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff))"/>
-                break;
             case Helper.TagType.Icon:
-                try
-                {
-                    @Html.Raw(Markdig.Markdown.ToHtml($"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>"))
-                }
-                catch (Exception)
-                {
-                    //ignored
-                }
-
+                Model.Content = Model.Content.Replace(stuff, $"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>");
                 break;
-            default: // Continuity for stuff appending after text. 
-                try
+            case Helper.TagType.Quote:
+                // <partial name="Shared/RenderQuote"
+                //           model="new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff))" />
+                using (var w = new StringWriter())
                 {
-                    switch (Helper.Evaluate(stuffs[index + 1]))
-                    {
-                        case Helper.TagType.Icon:
-                            @Html.Raw(Markdig.Markdown.ToHtml(stuff + $"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuffs[index + 1]))}'/>"))
-                            index++;
-                            goto OUTER_BREAK;
-                    }
+                    (await Html.PartialAsync("Shared/RenderQuote", new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff)))).WriteTo(w, HtmlEncoder);
+                    // Model.Content = Model.Content.Replace(stuff, XElement.Parse(w.ToString()).ToString());
+                    Model.Content = Model.Content.Replace(stuff,  w.ToString());
                 }
-                catch (Exception)
-                {
-                    //ignored
-                }
-
-                @Html.Raw(Markdig.Markdown.ToHtml(stuff))
-                OUTER_BREAK:
                 break;
-        }
+            default:
+                break; 
+
+        }   
     }
+    for (var i = 0; i < preTags.Count; i++)
+    {
+        Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", preTags[i].Value);
+    }
+    @Html.Raw(Model.Content)
+    // @Html.Raw(Markdig.Markdown.ToHtml(Model.Content, p))
+    // for (var index = 0; index < stuffs.Count; index++)
+    // {
+    //     var stuff = stuffs[index];
+    //     switch (Helper.Evaluate(stuff))
+    //     {
+    //         case Helper.TagType.Quote:
+    //             <partial name="Shared/RenderQuote"
+    //                      model="new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff))"/>
+    //             break;
+    //         case Helper.TagType.Icon:
+    //             try
+    //             {
+    //                 @Html.Raw(Markdig.Markdown.ToHtml($"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>"))
+    //             }
+    //             catch (Exception)
+    //             {
+    //                 ignored
+    //             }
+
+    //             break;
+    //         default: Continuity for stuff appending after text. 
+    //             try
+    //             {
+    //                 switch (Helper.Evaluate(stuffs[index + 1]))
+    //                 {
+    //                     case Helper.TagType.Icon:
+    //                         @Html.Raw(Markdig.Markdown.ToHtml(stuff + $"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuffs[index + 1]))}'/>"))
+    //                         index++;
+    //                         goto OUTER_BREAK;
+    //                 }
+    //             }
+    //             catch (Exception)
+    //             {
+    //                 ignored
+    //             }
+
+    //             @Html.Raw(Markdig.Markdown.ToHtml(stuff))
+    //             OUTER_BREAK:
+    //             break;
+    //     }
+    // }
 }

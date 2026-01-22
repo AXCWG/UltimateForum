@@ -8,7 +8,7 @@ public class OpenMojiIconPackHelperService : IIconPackHelperService
     {
         var e = Directory.EnumerateFiles(Path.Join(webHostEnvironment.WebRootPath, "assets","icons","openmoji-72x72-color")).OrderByDescending(i=>i).ToArray();
         var p = e.Select(i => Path.GetFileNameWithoutExtension(i)?? throw new FileLoadException("How could a file does not have a name???")).ToArray() ;
-        var n = e.Select(i => Path.GetRelativePath(webHostEnvironment.WebRootPath, i)).ToArray(); 
+        var n = e.Select(i => Path.GetRelativePath(webHostEnvironment.WebRootPath, i).Replace('\\', '/')).ToArray(); 
         if (e.Length != p.Length) throw new FileLoadException("Something very weird is happening right now. "); 
         for (int i = 0; i < p.Length; i++)
         {

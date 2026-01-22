@@ -4,6 +4,7 @@
 @model UltimateForum.Razor.Pages.Topic
 @{
     ViewData["Title"] = Model.TopicData?.Title;
+    
 }
 
 @section NavView
@@ -19,6 +20,9 @@
 <style>
     p {
         margin: 0;
+    }
+    pre{
+        padding: 1rem;
     }
 </style>
 <div style="max-width: 60rem" class="mx-auto">
@@ -50,7 +54,7 @@
         </div>
 
     </div>
-    <table class=" p-3 table  table-bordered mt-3">
+    <table style="table-layout: fixed; " class=" p-3 table table-bordered mt-3">
         <tbody class="">
         <!-- Topic View -->
         <tr class="h-auto">
@@ -108,7 +112,7 @@
                         <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
                         <div class="pb-2" style="font-size: .7rem">作者：
 
-                            <a asp-page="/">@p.Creator.Username</a>
+                            <a asp-page="/">@(p.Creator?.Username ?? "已删除")</a>
                             <span>@@@p.CreatedAt</span>
 
                         </div>
