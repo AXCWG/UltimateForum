@@ -22,11 +22,12 @@
         margin: 0;
     }
     pre{
-        padding: 1rem;
+        
+        margin-bottom: 0; 
     }
 </style>
 <div style="max-width: 60rem" class="mx-auto">
-    <div class="mb-3">
+    <div class="mb-3 ">
         <a asp-page="/Board" asp-route-boardid="@Model.TopicData?.Board.Id"> @{
                 var e = "<==";
                 <span>@e</span>
@@ -106,7 +107,7 @@
         <!-- End Topic View -->
         @foreach (var p in Model.TopicData?.Posts ?? [])
         {
-            <tr class="h-auto" id="@p.Id">
+            <tr class="h-auto" id="@p.Id" >
                 <td class="p-3">
                     <div>
                         <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
@@ -120,6 +121,7 @@
                             <partial name="Shared/RenderPost" model="new RenderPost { DbContext = Model.DbContext, Content = p.Content }"/>
                         </div>
                     </div>
+                    <hr />
                     <div style="height: 2rem">
 
                     </div>

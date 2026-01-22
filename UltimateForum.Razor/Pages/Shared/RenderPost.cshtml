@@ -1,4 +1,4 @@
-@using AXHelper.Extensions
+﻿@using AXHelper.Extensions
 @using Markdig
 @using Markdown.ColorCode
 @using System.Xml.Linq
@@ -21,10 +21,17 @@
     {
         Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
     }
+    var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
     var preTags = Regex.Matches(Model.Content, "<pre>([\\S\\s]*)</pre>");
     for(var i =0; i < preTags.Count; i++)
     {
-        Model.Content = Model.Content.Replace(preTags[i].Value, $"{randomStr}{i}{randomStr}");
+        Model.Content = Model.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
+    }
+    var randomStrForCode = AXHelper.Helpers.StringHelper.RandomString(8);
+    var codeTags = Regex.Matches(Model.Content, "<code>([\\S\\s]*)</code>");
+    for (var i = 0; i < codeTags.Count; i++)
+    {
+        Model.Content = Model.Content.Replace(codeTags[i].Value, $"{randomStrForCode}{i}{randomStrForCode}");
     }
     var tags = Helper.SplitWithDelimiter(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
 
@@ -52,49 +59,38 @@
     }
     for (var i = 0; i < preTags.Count; i++)
     {
-        Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", preTags[i].Value);
+        var randStr = AXHelper.Helpers.StringHelper.RandomString(10);
+        var frame = $@"
+                    <div class=""p-2"">
+                            <div class=""d-flex w-100 gap-2 justify-content-end"">
+                                                    <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
+                                                                                    document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+                                                                                        ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
+                                                                                        :  document.getElementById('pre-container-{randStr}-{i}').style.height = 'auto'
+                                                                                    document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+                                                                                        ? document.getElementById('pre-button-{randStr}-{i}').innerText='˄'
+                                                                                        : document.getElementById('pre-button-{randStr}-{i}').innerText='˅'
+                                                                                }})()"">˅</button>
+                                                    <button class='btn btn-sm bg-light-subtle' onclick=""(()=>{{
+                                                        navigator.clipboard.writeText(document.getElementById('pre-container-{randStr}-{i}').innerText)
+                                                        }})()"">Copy</button>
+                            </div>
+                        
+                        <div style='height: 4rem;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
+                            <content>
+                        </div>
+                        
+                    </div>
+                    ";
+        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}",  frame.Replace("<content>", preTags[i].Value));
+    }
+    for (var i = 0; i < codeTags.Count; i++)
+    {
+        Model.Content = Model.Content.Replace($"{randomStrForCode}{i}{randomStrForCode}", codeTags[i].Value);
     }
     @Html.Raw(Model.Content)
-    // @Html.Raw(Markdig.Markdown.ToHtml(Model.Content, p))
-    // for (var index = 0; index < stuffs.Count; index++)
-    // {
-    //     var stuff = stuffs[index];
-    //     switch (Helper.Evaluate(stuff))
-    //     {
-    //         case Helper.TagType.Quote:
-    //             <partial name="Shared/RenderQuote"
-    //                      model="new RenderQuote(Model.DbContext, Helper.GetQuoteIdFromTag(stuff))"/>
-    //             break;
-    //         case Helper.TagType.Icon:
-    //             try
-    //             {
-    //                 @Html.Raw(Markdig.Markdown.ToHtml($"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff))}'/>"))
-    //             }
-    //             catch (Exception)
-    //             {
-    //                 ignored
-    //             }
-
-    //             break;
-    //         default: Continuity for stuff appending after text. 
-    //             try
-    //             {
-    //                 switch (Helper.Evaluate(stuffs[index + 1]))
-    //                 {
-    //                     case Helper.TagType.Icon:
-    //                         @Html.Raw(Markdig.Markdown.ToHtml(stuff + $"<img style='height: .9rem;' src='{OpemMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuffs[index + 1]))}'/>"))
-    //                         index++;
-    //                         goto OUTER_BREAK;
-    //                 }
-    //             }
-    //             catch (Exception)
-    //             {
-    //                 ignored
-    //             }
-
-    //             @Html.Raw(Markdig.Markdown.ToHtml(stuff))
-    //             OUTER_BREAK:
-    //             break;
-    //     }
-    // }
+    
+    <script>
+        document.getElementById("1").style.display = "table-row"
+    </script>
 }

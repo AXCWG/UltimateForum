@@ -22,6 +22,7 @@
                     </div>
                     <div>
                         @{
+                            // DRY's a joke.
                             var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
                             var stuffs = Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
                             var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
@@ -36,6 +37,20 @@
                             {
                                 post.Content = post.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
                             }
+
+                            var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
+                            var preTags = Regex.Matches(post.Content, "<pre>([\\S\\s]*)</pre>");
+                            for (var i = 0; i < preTags.Count; i++)
+                            {
+                                post.Content = post.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
+                            }
+                            var randomStrForCode = AXHelper.Helpers.StringHelper.RandomString(8);
+                            var codeTags = Regex.Matches(post.Content, "<code>([\\S\\s]*)</code>");
+                            for (var i = 0; i < codeTags.Count; i++)
+                            {
+                                post.Content = post.Content.Replace(codeTags[i].Value, $"{randomStrForCode}{i}{randomStrForCode}");
+                            }
+
                             var tags = Helper.SplitWithDelimiter(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
                             foreach (var stuff in tags)
                             {
@@ -57,6 +72,37 @@
                                         break;
 
                                 }
+                            }
+
+
+
+                            for (var i = 0; i < preTags.Count; i++)
+                            {
+                                var randStr = AXHelper.Helpers.StringHelper.RandomString(10);
+                                var frame = $@"
+                                <div class=""p-2"">
+                                <div class=""d-flex w-100 justify-content-end"">
+                                <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
+                                document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+                                ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
+                                :  document.getElementById('pre-container-{randStr}-{i}').style.height = 'auto'
+                                document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+                                ? document.getElementById('pre-button-{randStr}-{i}').innerText='˄'
+                                : document.getElementById('pre-button-{randStr}-{i}').innerText='˅'
+                                }})()"">˅</button>
+                                </div>
+
+                                <div style='height: 4rem;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
+                                <content>
+                                </div>
+
+                                </div>
+                                ";
+                                post.Content = post.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace("<content>", preTags[i].Value));
+                            }
+                            for (var i = 0; i < codeTags.Count; i++)
+                            {
+                                post.Content = post.Content.Replace($"{randomStrForCode}{i}{randomStrForCode}", codeTags[i].Value);
                             }
                             @Html.Raw(post.Content)
                         }
