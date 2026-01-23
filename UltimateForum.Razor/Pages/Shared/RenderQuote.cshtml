@@ -3,6 +3,9 @@
 @using Markdig
 @using Markdown.ColorCode
 @using System.Xml.Linq
+@using AngleSharp.Html
+@using AngleSharp.Html.Parser
+@using Ganss.Xss
 @using Markdown.ColorCode.CSharpToColoredHtml
 @model UltimateForum.Razor.Pages.Shared.RenderQuote
 @inject OpenMojiIconPackHelperService OpenMojiIconPack
@@ -31,26 +34,29 @@
                         @{
                             // DRY's a joke.
                             var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
-                            var stuffs = Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
-                            var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
-                            string withoutTag = post.Content;
-                            for (var i = 0; i < stuffs.Count; i++)
-                            {
-                                withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
-                            }
-                            var mds = Markdig.Markdown.ToHtml(withoutTag, p);
-                            post.Content = mds;
-                            for (var i = 0; i < stuffs.Count; i++)
-                            {
-                                post.Content = post.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
-                            }
-
-                            var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
-                            var preTags = Regex.Matches(post.Content, "<pre>([\\S\\s]*)</pre>");
-                            for (var i = 0; i < preTags.Count; i++)
-                            {
-                                post.Content = post.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
-                            }
+                            
+                            // Remove Server-side Markdown rendering. 
+                            // var stuffs = Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
+                            // var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
+                            // string withoutTag = post.Content;
+                            // for (var i = 0; i < stuffs.Count; i++)
+                            // {
+                            //     withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
+                            // }
+                            // var mds = Markdig.Markdown.ToHtml(withoutTag, p);
+                            // post.Content = mds;
+                            // for (var i = 0; i < stuffs.Count; i++)
+                            // {
+                            //     post.Content = post.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
+                            // }
+                            
+                            // L49-44 & L84-112 disable <pre> parse in quote context. 
+                            // var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
+                            // var preTags = Regex.Matches(post.Content, "<pre>([\\S\\s]*)</pre>");
+                            // for (var i = 0; i < preTags.Count; i++)
+                            // {
+                            //     post.Content = post.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
+                            // }
                             var randomStrForCode = AXHelper.Helpers.StringHelper.RandomString(8);
                             var codeTags = Regex.Matches(post.Content, "<code>([\\S\\s]*)</code>");
                             for (var i = 0; i < codeTags.Count; i++)
@@ -71,7 +77,7 @@
                                         await using (var w = new StringWriter())
                                         {
                                             (await Html.PartialAsync("Shared/RenderQuote", new RenderQuote(Model.Db, Helper.GetQuoteIdFromTag(stuff)))).WriteTo(w, HtmlEncoder);
-                                            post.Content = post.Content.Replace(stuff, XElement.Parse(w.ToString()).ToString());
+                                            post.Content = post.Content.Replace(stuff, w.ToString());
                                         }
                                         break;
                                 }
@@ -79,37 +85,41 @@
 
 
 
-                            for (var i = 0; i < preTags.Count; i++)
-                            {
-                                var randStr = AXHelper.Helpers.StringHelper.RandomString(10);
-                                
-                                //language=html
-                                var frame = $@"
-                                <div class=""p-2"">
-                                <div class=""d-flex w-100 justify-content-end"">
-                                <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
-                                document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
-                                ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
-                                :  document.getElementById('pre-container-{randStr}-{i}').style.height = 'auto'
-                                document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
-                                ? document.getElementById('pre-button-{randStr}-{i}').innerText='˄'
-                                : document.getElementById('pre-button-{randStr}-{i}').innerText='˅'
-                                }})()"">˅</button>
-                                </div>
-
-                                <div style='height: 4rem;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
-                                <content>
-                                </div>
-
-                                </div>
-                                ";
-                                post.Content = post.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace("<content>", preTags[i].Value));
-                            }
+//                             for (var i = 0; i < preTags.Count; i++)
+//                             {
+//                                 var randStr = AXHelper.Helpers.StringHelper.RandomString(10);
+//                                 
+//                                 //language=html
+//                                 var frame = $@"
+//                                 <div class=""p-2"">
+//                                 <div class=""d-flex w-100 gap-2 justify-content-end"">
+//                                 <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
+//                                 document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+//                                 ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
+//                                 :  document.getElementById('pre-container-{randStr}-{i}').style.height = 'auto'
+//                                 document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
+//                                 ? document.getElementById('pre-button-{randStr}-{i}').innerText='˄'
+//                                 : document.getElementById('pre-button-{randStr}-{i}').innerText='˅'
+//                                 }})()"">˅</button>
+// <button class='btn btn-sm bg-body-tertiary' onclick=""(()=>{{
+//                                                         navigator.clipboard.writeText(document.getElementById('pre-container-{randStr}-{i}').innerText)
+//                                                         }})()"">Copy</button>
+//                                 </div>
+//
+//                                 <div style='height: 4rem;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
+//                                 <content>
+//                                 </div>
+//
+//                                 </div>
+//                                 ";
+//                                 post.Content = post.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace("<content>", preTags[i].Value));
+//                             }
                             for (var i = 0; i < codeTags.Count; i++)
                             {
                                 post.Content = post.Content.Replace($"{randomStrForCode}{i}{randomStrForCode}", codeTags[i].Value);
                             }
-                            @Html.Raw(post.Content)
+                            
+                            @Html.Raw(post.Content);
                         }
                     </div>
                    }

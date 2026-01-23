@@ -158,6 +158,11 @@ namespace UltimateForum.Razor.Migrations
                     b.Property<long?>("CreatorId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
                     b.Property<long>("TopicId")
                         .HasColumnType("INTEGER");
 

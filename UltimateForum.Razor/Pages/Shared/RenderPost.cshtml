@@ -7,24 +7,21 @@
     // Safe render markdown
     var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
     var stuffs = Regex.Matches(Model.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
-    var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
-    string withoutTag = Model.Content;
-    for (var i = 0; i < stuffs.Count; i++)
-    {
-        withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
-    }
-    var mds = Markdown.ToHtml(withoutTag, p);
-    Model.Content = mds; 
-    for(var i = 0; i < stuffs.Count; i++)
-    {
-        Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
-    }
-    var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
-    var preTags = Regex.Matches(Model.Content, "<pre>([\\S\\s]*)</pre>");
-    for(var i =0; i < preTags.Count; i++)
-    {
-        Model.Content = Model.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
-    }
+    
+    // Remove Server-side Markdown render
+    // var p = new MarkdownPipelineBuilder().UseAdvancedExtensions().UseColorCode().Build();
+    // string withoutTag = Model.Content;
+    // for (var i = 0; i < stuffs.Count; i++)
+    // {
+    //     withoutTag = withoutTag.Replace(stuffs[i].Value, $"{randomStr}{i}{randomStr}");
+    // }
+    // var mds = Markdown.ToHtml(withoutTag, p);
+    // Model.Content = mds; 
+    // for(var i = 0; i < stuffs.Count; i++)
+    // {
+    //     Model.Content = Model.Content.Replace($"{randomStr}{i}{randomStr}", stuffs[i].Value);
+    // }
+    
     var randomStrForCode = AXHelper.Helpers.StringHelper.RandomString(8);
     var codeTags = Regex.Matches(Model.Content, "<code>([\\S\\s]*)</code>");
     for (var i = 0; i < codeTags.Count; i++)
@@ -51,6 +48,12 @@
                 }
                 break;
         }   
+    }
+    var randomStrForPre = AXHelper.Helpers.StringHelper.RandomString(8);
+    var preTags = Regex.Matches(Model.Content, "<pre>([\\S\\s]*)</pre>");
+    for(var i =0; i < preTags.Count; i++)
+    {
+        Model.Content = Model.Content.Replace(preTags[i].Value, $"{randomStrForPre}{i}{randomStrForPre}");
     }
     for (var i = 0; i < preTags.Count; i++)
     {
@@ -91,7 +94,8 @@
                         
                     </div>
                     ";
-        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace($"<content-{randomStr}>", preTags[i].Value));
+        // Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace($"<content-{randomStr}>", preTags[i].Value));
+        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", preTags[i].Value); 
     }
     for (var i = 0; i < codeTags.Count; i++)
     {

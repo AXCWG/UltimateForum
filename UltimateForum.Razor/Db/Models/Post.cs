@@ -11,13 +11,11 @@ public class Post
 {
     
     public long Id { get; set; }
-
-    
+    [MaxLength(255)]
+    public required string Title { get; set; }
     public required string Content { get; set; }
     public required Topic Topic { get; set; }
     public long TopicId { get; set; }
-
-   
     public required User? Creator { get; set; }
     public long? CreatorId { get; set; }
     public required DateTime CreatedAt { get; set; }

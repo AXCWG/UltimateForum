@@ -22,8 +22,10 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
     [BindProperty(SupportsGet = true)]
     public long? TopicId { get; set; }
     public Db.Models.Topic? TopicData { get; set; }
-    
 
+    [BindProperty]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "标题不能为空")]
+    public string Title { get; set; } = "";
     [BindProperty]
     [Required(AllowEmptyStrings =  false, ErrorMessage = "此项不为空")]
     public new string Content { get; set; } = "";
@@ -69,6 +71,10 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
 
         var firstOrDefault = _db.Topics.FirstOrDefault(i=>i.Id == TopicId);
         var sanitizer = new HtmlSanitizer();
+        sanitizer.AllowedSchemes.Add("mailto");
+        sanitizer.AllowedAttributes.Add("class");
+
+        // var content = Content; 
         var content = sanitizer.Sanitize(Content); 
         if (string.IsNullOrWhiteSpace(content))
         {
@@ -77,6 +83,7 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
        
         _db.Posts.Add(new()
         {
+            Title = Title,
             Content =content,
             Topic = firstOrDefault ?? throw new InvalidOperationException(),
             AttachmentUuid = [], CreatedAt = DateTime.Now, Creator = u ?? _db.Users.Find((long)1)!

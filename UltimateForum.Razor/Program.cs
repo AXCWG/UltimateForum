@@ -110,6 +110,7 @@ using (var scope = app.Services.CreateScope())
         
         var post = new Post()
         {
+            Title = "测试标题",
             Content = "测试回复呦呦", Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = []
         };
         db.Posts.Add(post);
@@ -117,6 +118,7 @@ using (var scope = app.Services.CreateScope())
         
         db.Posts.Add(new()
         {
+            Title = "回复2",
             Content = """$$[!quote content="1"]$$ 测试回复：测试回复呦呦 """, Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = [],
         });
 
