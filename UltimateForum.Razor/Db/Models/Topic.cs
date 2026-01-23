@@ -13,7 +13,7 @@ public class Topic
     public required string Content { get; set;  }
     public Board Board { get; set; } = null!;
     public long BoardId { get; set; }
-    public required User Creater { get; set; }
+    public required User? Creater { get; set; }
     public long? CreaterId { get; set; }
     public required DateTime CreatedOn { get; set; }
     public ICollection<Post> Posts { get; set; } = new List<Post>();

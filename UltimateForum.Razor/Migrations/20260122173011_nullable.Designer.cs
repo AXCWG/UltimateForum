@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UltimateForum.Razor.Db;
 
@@ -10,9 +11,11 @@ using UltimateForum.Razor.Db;
 namespace UltimateForum.Razor.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    partial class ForumDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260122173011_nullable")]
+    partial class nullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
@@ -95,7 +98,7 @@ namespace UltimateForum.Razor.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<long?>("CreatedById")
+                    b.Property<long>("CreatedById")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
@@ -210,8 +213,7 @@ namespace UltimateForum.Razor.Migrations
                 {
                     b.HasOne("UltimateForum.Razor.Db.Models.BoardGroup", "BoardGroup")
                         .WithMany("Boards")
-                        .HasForeignKey("BoardGroupId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("BoardGroupId");
 
                     b.Navigation("BoardGroup");
                 });
@@ -221,7 +223,7 @@ namespace UltimateForum.Razor.Migrations
                     b.HasOne("UltimateForum.Db.Models.User", "CreatedBy")
                         .WithMany("CreatedBoardGroups")
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .IsRequired();
 
                     b.Navigation("CreatedBy");
                 });
@@ -249,8 +251,7 @@ namespace UltimateForum.Razor.Migrations
                 {
                     b.HasOne("UltimateForum.Db.Models.User", "Creator")
                         .WithMany("CreatedPosts")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("UltimateForum.Razor.Db.Models.Topic", "Topic")
                         .WithMany("Posts")
@@ -273,8 +274,7 @@ namespace UltimateForum.Razor.Migrations
 
                     b.HasOne("UltimateForum.Db.Models.User", "Creater")
                         .WithMany("CreatedTopics")
-                        .HasForeignKey("CreaterId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CreaterId");
 
                     b.Navigation("Board");
 

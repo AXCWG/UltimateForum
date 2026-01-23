@@ -1,4 +1,5 @@
 @page
+@using System.Globalization
 @using UltimateForum.Razor.Pages.Shared
 @using UltimateForum.Razor.Pages.User
 @model UltimateForum.Razor.Pages.Topic
@@ -107,7 +108,7 @@
         <!-- End Topic View -->
         @foreach (var p in Model.TopicData?.Posts ?? [])
         {
-            <tr class="h-auto" id="@p.Id" >
+            <tr class="h-auto" id="@p.Id" style="scroll-margin-top: 65px" >
                 <td class="p-3">
                     <div>
                         <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
@@ -129,15 +130,15 @@
                 </td>
                 <td class="col-3 ">
                     <div style="font-size: .7rem">
-                        @if (p.Creator.AvatarUuid is not null)
+                        @if (p.Creator?.AvatarUuid is not null)
                         {
                             <img class="img-fluid"
                                  src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
                                  style="width: 2rem;height: 2rem;" alt="avatar"/>
                         }
 
-                        <a asp-page="/">@p.Creator.Username</a>
-                        <div class="text-secondary-emphasis">加入：@p.Creator.Joined</div>
+                        <a asp-page="/">@(p.Creator?.Username ?? "已删除") </a>
+                        <div class="text-secondary-emphasis">加入：@(p.Creator?.Joined.ToString(CultureInfo.CurrentCulture)??"已删除")</div>
 
 
                     </div>

@@ -33,22 +33,46 @@ public class ForumDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Topic>().HasOne(i => i.Board).WithMany(i => i.Topics).HasForeignKey(i => i.BoardId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Topic>().HasOne(i => i.Creater).WithMany(i => i.CreatedTopics)
-            .HasForeignKey(i => i.CreaterId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-        modelBuilder.Entity<Post>().HasOne(i => i.Topic).WithMany(i => i.Posts).HasForeignKey(i => i.TopicId)
-            .OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<Post>().HasOne(i => i.Creator).WithMany(i => i.CreatedPosts).HasForeignKey(i => i.CreatorId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
-        modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Board).WithMany(i => i.BoardUserOrganizers)
-            .HasForeignKey(i => i.BoardId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Designated).WithMany(i => i.BoardUserOrganizers)
-            .HasForeignKey(i => i.DesignatedId).OnDelete(DeleteBehavior.Cascade);
-        modelBuilder.Entity<BoardGroup>().HasOne(i => i.CreatedBy).WithMany(i => i.CreatedBoardGroups)
-            .HasForeignKey(i => i.CreatedById).OnDelete(DeleteBehavior.ClientSetNull);
-        modelBuilder.Entity<Board>().HasOne(i=>i.BoardGroup).WithMany(i=>i.Boards).HasForeignKey(i=>i.BoardGroupId)
-            .OnDelete(DeleteBehavior.ClientSetNull);
+        if (this.Database.ProviderName == "Microsoft.EntityFrameworkCore.Sqlite")
+        {
+            modelBuilder.Entity<Topic>().HasOne(i => i.Board).WithMany(i => i.Topics).HasForeignKey(i => i.BoardId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Topic>().HasOne(i => i.Creater).WithMany(i => i.CreatedTopics)
+                .HasForeignKey(i => i.CreaterId)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Post>().HasOne(i => i.Topic).WithMany(i => i.Posts).HasForeignKey(i => i.TopicId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Post>().HasOne(i => i.Creator).WithMany(i => i.CreatedPosts).HasForeignKey(i => i.CreatorId)
+                .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Board).WithMany(i => i.BoardUserOrganizers)
+                .HasForeignKey(i => i.BoardId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Designated).WithMany(i => i.BoardUserOrganizers)
+                .HasForeignKey(i => i.DesignatedId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<BoardGroup>().HasOne(i => i.CreatedBy).WithMany(i => i.CreatedBoardGroups)
+                .HasForeignKey(i => i.CreatedById).OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Board>().HasOne(i=>i.BoardGroup).WithMany(i=>i.Boards).HasForeignKey(i=>i.BoardGroupId)
+                .OnDelete(DeleteBehavior.SetNull);
+        }
+        else
+        {
+            modelBuilder.Entity<Topic>().HasOne(i => i.Board).WithMany(i => i.Topics).HasForeignKey(i => i.BoardId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Topic>().HasOne(i => i.Creater).WithMany(i => i.CreatedTopics)
+                .HasForeignKey(i => i.CreaterId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Post>().HasOne(i => i.Topic).WithMany(i => i.Posts).HasForeignKey(i => i.TopicId)
+                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Post>().HasOne(i => i.Creator).WithMany(i => i.CreatedPosts).HasForeignKey(i => i.CreatorId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Board).WithMany(i => i.BoardUserOrganizers)
+                .HasForeignKey(i => i.BoardId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<BoardUserOrganizer>().HasOne(i => i.Designated).WithMany(i => i.BoardUserOrganizers)
+                .HasForeignKey(i => i.DesignatedId).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<BoardGroup>().HasOne(i => i.CreatedBy).WithMany(i => i.CreatedBoardGroups)
+                .HasForeignKey(i => i.CreatedById).OnDelete(DeleteBehavior.ClientSetNull);
+            modelBuilder.Entity<Board>().HasOne(i=>i.BoardGroup).WithMany(i=>i.Boards).HasForeignKey(i=>i.BoardGroupId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+        }
+       
     }
 }

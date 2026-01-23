@@ -48,4 +48,17 @@ public class Home(ForumDbContext forumDbContext) : PageModel
         _dbContext.Users.Where(i=>i.Id == HttpContext.Session.GetLong("uid")).ExecuteUpdate(i => i.SetProperty(u=>u.Email, EditProfile.Email));
         return RedirectToPage("/User/Home"); 
     }
+
+    public IActionResult OnGetDeleteAccount()
+    {
+        var u = _dbContext.Users.Find(HttpContext.Session.GetLong("uid"));
+        if (u is null)
+        {
+            return BadRequest(); 
+        }
+        _dbContext.Users.Remove(u);
+        _dbContext.SaveChanges();
+        HttpContext.Session.Remove("uid");
+        return RedirectToPage("/Index");
+    }
 }

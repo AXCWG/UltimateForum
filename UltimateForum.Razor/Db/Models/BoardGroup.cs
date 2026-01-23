@@ -13,5 +13,5 @@ public class BoardGroup
     public ICollection<Board> Boards { get; set; } = new List<Board>(); 
     public required DateTime CreatedAt { get; set; }
     public User? CreatedBy { get; set; }
-    public long CreatedById { get; set;  }
+    public long? CreatedById { get; set;  }
 }

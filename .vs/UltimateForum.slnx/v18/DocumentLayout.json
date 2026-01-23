@@ -1,18 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\",
+  "WorkspaceRootPath": "Z:\\UltimateForum\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|c:\\users\\30958\\riderprojects\\ultimateforum\\ultimateforum.razor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|z:\\ultimateforum\\ultimateforum.razor\\pages\\topic.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\pages\\topic.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|z:\\ultimateforum\\ultimateforum.razor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|c:\\users\\30958\\riderprojects\\ultimateforum\\ultimateforum.razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|z:\\ultimateforum\\ultimateforum.razor\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|c:\\users\\30958\\riderprojects\\ultimateforum\\ultimateforum.razor\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\pages\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|z:\\ultimateforum\\ultimateforum.razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{F7B9D439-130E-F3FA-DD23-FA90F0E7EC3C}|UltimateForum.Razor\\UltimateForum.Razor.csproj|solutionrelative:ultimateforum.razor\\pages\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -35,10 +39,23 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "Topic.cshtml",
+              "DocumentMoniker": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Topic.cshtml",
+              "RelativeDocumentMoniker": "UltimateForum.Razor\\Pages\\Topic.cshtml",
+              "ToolTip": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Topic.cshtml",
+              "RelativeToolTip": "UltimateForum.Razor\\Pages\\Topic.cshtml",
+              "ViewState": "AgIAAMcAAABAZmZmZmYkwNoAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-01-21T13:58:43.716Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
               "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Properties\\launchSettings.json",
+              "DocumentMoniker": "Z:\\UltimateForum\\UltimateForum.Razor\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "UltimateForum.Razor\\Properties\\launchSettings.json",
-              "ToolTip": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Properties\\launchSettings.json",
+              "ToolTip": "Z:\\UltimateForum\\UltimateForum.Razor\\Properties\\launchSettings.json",
               "RelativeToolTip": "UltimateForum.Razor\\Properties\\launchSettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
@@ -49,27 +66,25 @@
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "_Layout.cshtml",
-              "DocumentMoniker": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
+              "DocumentMoniker": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
               "RelativeDocumentMoniker": "UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
-              "ToolTip": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
+              "ToolTip": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
               "RelativeToolTip": "UltimateForum.Razor\\Pages\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAACEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-19T13:29:39.907Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T13:29:39.907Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Pages\\Index.cshtml",
+              "DocumentMoniker": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Index.cshtml",
               "RelativeDocumentMoniker": "UltimateForum.Razor\\Pages\\Index.cshtml",
-              "ToolTip": "C:\\Users\\30958\\RiderProjects\\UltimateForum\\UltimateForum.Razor\\Pages\\Index.cshtml",
+              "ToolTip": "Z:\\UltimateForum\\UltimateForum.Razor\\Pages\\Index.cshtml",
               "RelativeToolTip": "UltimateForum.Razor\\Pages\\Index.cshtml",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-01-19T13:27:58.013Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-19T13:27:58.013Z"
             }
           ]
         }

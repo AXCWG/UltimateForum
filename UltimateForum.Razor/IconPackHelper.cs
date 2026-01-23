@@ -21,9 +21,9 @@ public class OpenMojiIconPackHelperService : IIconPackHelperService
         return _packs;
     }
 
-    public string GetIcon(string name)
+    public string? GetIcon(string name)
     {
-        return _packs.FirstOrDefault(i => i.Key.ToLowerInvariant() == name.ToLowerInvariant()).Value ?? throw new KeyNotFoundException();
+        return _packs.FirstOrDefault(i => i.Key.ToLowerInvariant() == name.ToLowerInvariant()).Value;
     }
 }
 

@@ -19,7 +19,7 @@ public class Post
 
    
     public required User? Creator { get; set; }
-    public long CreatorId { get; set; }
+    public long? CreatorId { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required List<string> AttachmentUuid { get; set; }
 }

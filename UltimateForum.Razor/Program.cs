@@ -72,14 +72,13 @@ using (var scope = app.Services.CreateScope())
             Username = "Admin", Password = password.ToSha256String(), Op = true, Joined =  DateTime.Now,
         }; 
         db.Users.Add(user);
-        Task.Delay(2000).GetAwaiter().GetResult();
         var newBoardGroup = new BoardGroup
         {
             Name = "默认板块",
             CreatedAt = DateTime.Now, CreatedBy = user
         };
         db.BoardGroups.Add(newBoardGroup);
-        Task.Delay(2000).GetAwaiter().GetResult();
+
         
         
         var newBoard = new Board
@@ -91,14 +90,14 @@ using (var scope = app.Services.CreateScope())
             BoardGroup = newBoardGroup
         };
         db.Boards.Add(newBoard);
-        Task.Delay(2000).GetAwaiter().GetResult();
+
 
         db.BoardUserOrganizers.Add(new()
         {
             Board = newBoard, Designated = user, Uuid = Guid.NewGuid().ToString(), Since = DateTime.Now,
             Status = BoardUserOrganizer.Role.Admin
         });
-        Task.Delay(2000).GetAwaiter().GetResult();
+
         
         var topic = new Topic()
         {
@@ -108,20 +107,20 @@ using (var scope = app.Services.CreateScope())
             CreatedOn = DateTime.Now, Creater = user
         };
         db.Topics.Add(topic);
-        Task.Delay(2000).GetAwaiter().GetResult();
+
         
         var post = new Post()
         {
             Content = "测试回复呦呦", Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = []
         };
         db.Posts.Add(post);
-        Task.Delay(2000).GetAwaiter().GetResult();
+
         
         db.Posts.Add(new()
         {
             Content = """$$[!quote content="1"]$$ 测试回复：测试回复呦呦 """, Creator = user, Topic = topic, CreatedAt = DateTime.Now, AttachmentUuid = [],
         });
-        Task.Delay(2000).GetAwaiter().GetResult();
+
         
         
         db.SaveChanges();
