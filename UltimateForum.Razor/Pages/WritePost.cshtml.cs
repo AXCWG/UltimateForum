@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AXHelper.Extensions;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -67,10 +68,16 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
         #endregion
 
         var firstOrDefault = _db.Topics.FirstOrDefault(i=>i.Id == TopicId);
-
+        var sanitizer = new HtmlSanitizer();
+        var content = sanitizer.Sanitize(Content); 
+        if (string.IsNullOrWhiteSpace(content))
+        {
+            return RedirectToPage("/Topic", new { TopicId });
+        }
+       
         _db.Posts.Add(new()
         {
-            Content = Content,
+            Content =content,
             Topic = firstOrDefault ?? throw new InvalidOperationException(),
             AttachmentUuid = [], CreatedAt = DateTime.Now, Creator = u ?? _db.Users.Find((long)1)!
         });

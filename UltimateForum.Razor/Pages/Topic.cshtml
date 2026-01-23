@@ -10,6 +10,7 @@
 
 @section NavView
 {
+    
     <a asp-page="/Index" id="index" class="me-2">首页</a>
     /
     <a class="ms-2 me-2" id="board" asp-page="/Board"
@@ -56,7 +57,7 @@
         </div>
 
     </div>
-    <table style="table-layout: fixed; " class=" p-3 table table-bordered mt-3">
+    <table style="table-layout: fixed;min-height: 15rem" class="border-dark-subtle p-3  table table-bordered mt-3 ">
         <tbody class="">
         <!-- Topic View -->
         <tr class="h-auto">
@@ -64,9 +65,9 @@
                 <div>
                     <h2 class="mb-4">@Model.TopicData?.Title</h2>
                     <div class="pb-2" style="font-size: .7rem">作者：
-                        @if (Model.TopicData?.Creater.Username is null)
+                        @if (Model.TopicData?.Creater?.Username is null)
                         {
-                            <span>未知或已删除@@@Model.TopicData?.CreatedOn</span>
+                            <span>已删除@@@Model.TopicData?.CreatedOn</span>
                         }
                         else
                         {
@@ -76,12 +77,10 @@
                     </div>
                     <div style="font-size: .9rem">@Model.TopicData?.Content</div>
                 </div>
-                <div style="height: 2rem">
-
-                </div>
+                <br/>
 
             </td>
-            <td class="col-3 ">
+            <td class="col-3 p-3">
                 <div style="font-size: .7rem">
                     @if (Model.TopicData?.Creater is null)
                     {
@@ -93,7 +92,8 @@
                         {
                             <img class="img-fluid"
                                  src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
-                                 style="width: 2rem;height: 2rem;" alt="avatar"/>
+                                 style="width: 7rem;object-fit: cover;height: 7rem;" alt="avatar"/>
+                            <br/>
                         }
 
                         <a asp-page="/">@Model.TopicData.Creater.Username</a>
@@ -106,48 +106,59 @@
             </td>
         </tr>
         <!-- End Topic View -->
-        @foreach (var p in Model.TopicData?.Posts ?? [])
-        {
-            <tr class="h-auto" id="@p.Id" style="scroll-margin-top: 65px" >
-                <td class="p-3">
-                    <div>
-                        <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
-                        <div class="pb-2" style="font-size: .7rem">作者：
-
-                            <a asp-page="/">@(p.Creator?.Username ?? "已删除")</a>
-                            <span>@@@p.CreatedAt</span>
-
-                        </div>
-                        <div style="font-size: .9rem; ">
-                            <partial name="Shared/RenderPost" model="new RenderPost { DbContext = Model.DbContext, Content = p.Content }"/>
-                        </div>
-                    </div>
-                    <hr />
-                    <div style="height: 2rem">
-
-                    </div>
-
-                </td>
-                <td class="col-3 ">
-                    <div style="font-size: .7rem">
-                        @if (p.Creator?.AvatarUuid is not null)
-                        {
-                            <img class="img-fluid"
-                                 src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
-                                 style="width: 2rem;height: 2rem;" alt="avatar"/>
-                        }
-
-                        <a asp-page="/">@(p.Creator?.Username ?? "已删除") </a>
-                        <div class="text-secondary-emphasis">加入：@(p.Creator?.Joined.ToString(CultureInfo.CurrentCulture)??"已删除")</div>
-
-
-                    </div>
-
-                </td>
-            </tr>
-        }
+        
         </tbody>
     </table>
+    <div class="gap-3 d-flex flex-column">
+        @foreach (var p in Model.TopicData?.Posts ?? [])
+        {
+            <div class="h-auto card border-0 bg-body-tertiary d-flex flex-row w-100 " id="@p.Id" style="scroll-margin-top: 65px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="p-3 col border-end">
+                            <div>
+                                <div class="p-0 m-0">Re：@Model.TopicData?.Title</div>
+                                <div class="pb-2" style="font-size: .7rem">作者：
+
+                                    <a asp-page="/">@(p.Creator?.Username ?? "已删除")</a>
+                                    <span>@@@p.CreatedAt</span>
+
+                                </div>
+                                <div style="font-size: .9rem; ">
+                                    <partial name="Shared/RenderPost" model="new RenderPost { DbContext = Model.DbContext, Content = p.Content }"/>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div style="height: 2rem">
+
+                            </div>
+
+                        </div>
+                        <div class="p-3 col-3">
+                            <div style="font-size: .7rem">
+                                @if (p.Creator?.AvatarUuid is not null)
+                                {
+                                    <img class="img-fluid"
+                                         src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
+                                         style="width: 7rem;object-fit: cover;height: 7rem;" alt="avatar"/>
+                                    <br/>
+                                }
+
+                                <a asp-page="/">@(p.Creator?.Username ?? "已删除") </a>
+                                <div class="text-secondary-emphasis">加入：@(p.Creator?.Joined.ToString(CultureInfo.CurrentCulture) ?? "已删除")</div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+        }
+    </div>
+    
 </div>
 
 @section Scripts
@@ -156,7 +167,7 @@
 
         let id = location.hash.replace("#", "");
         if (id) {
-            let title = document.getElementById(id).children[0].children[0].children[0].innerHTML;
+            let title = document.getElementById(id).children[0].children[0].children[0].children[0].children[0].innerText;
             console.log(title);
             document.getElementById("topic").classList.add("me-2");
             document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new { TopicId = Model.TopicData?.Id })#${id}'>${title}</a>`;

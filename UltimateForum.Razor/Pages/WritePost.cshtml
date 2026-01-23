@@ -8,7 +8,7 @@
 <div style="max-width: 35rem" class="card w-auto d-block mt-2 p-3 bg-dark-subtle gap-2">
     <div class="dropdown">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-            Dropdown form
+            Icons
         </button>
         <div class="dropdown-menu p-0">
             <div class=" gap-2 p-3">
@@ -128,7 +128,7 @@
                     })()'>引用</button></div>
                     <div class="pb-2" style="font-size: .7rem">作者：
                         
-                            <a asp-page="/">@p.Creator.Username</a>
+                            <a asp-page="/">@(p.Creator?.Username ?? "已删除")</a>
                             <span>@@@p.CreatedAt</span>
                         
                     </div>
@@ -143,16 +143,16 @@
             </td>
             <td class="col-3 ">
                 <div style="font-size: .7rem" >
-                    @if (Model.TopicData?.Creater is null)
+                    @if (p.Creator is null)
                     {
-                        <div>匿名或已删除</div>
+                        <div>已删除</div>
                     }
                     else
                     {
-                        @if (Model.TopicData.Creater.AvatarUuid is not null)
+                        @if (p.Creator.AvatarUuid is not null)
                         {
                             <img class="img-fluid"
-                                 src="@Url.Page("/Topic", "Avatar", new { userUid = Model.TopicData.Creater.Id })"
+                                 src="@Url.Page("/Topic", "Avatar", new { userUid = p.Creator.Id })"
                                  style="width: 2rem;height: 2rem;" alt="avatar"/>
                         }
 

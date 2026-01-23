@@ -16,9 +16,5 @@ public class BinaryDbContext : DbContext
     public BinaryDbContext(DbContextOptions<BinaryDbContext> options) : base(options)
     {
     }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        _str.CreateDirectoryOfDataSource();
-        optionsBuilder.UseSqlite(_str);
-    }
+    
 }

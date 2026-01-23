@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="HtmlSanitizer" Version="9.0.889" />
       <PackageReference Include="Markdig" Version="0.44.0" />
       <PackageReference Include="Markdown.ColorCode" Version="3.0.1" />
       <PackageReference Include="Markdown.ColorCode.CSharpToColoredHtml" Version="3.0.1" />

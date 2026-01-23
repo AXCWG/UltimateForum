@@ -7,41 +7,81 @@
 <div class="row gap-3">
     <div class="display-6">个人 - @Model.User.Username</div>
     <div class="card bg-light-subtle d-block w-100 p-3 px-5">
-        <div class="mx-auto" style="max-width: 25rem">
-            @if (Model.Edit)
-            {
-                <form method="post">
+        <div class="mx-auto d-flex gap-3 align-items-center" style="max-width: 25rem">
+            <div style="width: 5rem; height: 5rem;background-size: cover;background-position: center; background-image: url('@Url.Page(null, "GetAvatar")')" class="border bg-body-tertiary d-flex align-items-center" >
+                <form method="post" id="avatar-form" asp-page-handler="UploadAvatar" enctype="multipart/form-data">
+                    <input asp-for="AvatarUpload.Profile" oninput="(()=>{
+                        document.getElementById('avatar-form-submit').click()
+                    })()" type="file" class="form-control opacity-0 " style="zoom: 2"/>
+                    <button type="submit" class="visually-hidden" id="avatar-form-submit"></button>
+                </form>
+            </div>
+            <div>
+                @if (Model.EditProfileFlag)
+                {
+                    <form method="post">
+                        <div>用户名：@Model.User.Username</div>
+                        <input class="form-control w-auto mt-2 form-control-sm" placeholder="Email（可选）" asp-for="EditProfile.Email"/>
+
+
+                        <div class="d-flex flex-row gap-2 mt-2">
+                            <button class="btn btn-primary btn-sm w-auto" asp-page-handler="EditProfile" type="submit">保存</button>
+                            <a class="btn btn-danger btn-sm w-auto" asp-route-editProfileFlag="">取消</a>
+                        </div>
+                    </form>
+
+                }
+                else
+                {
                     <div>用户名：@Model.User.Username</div>
-                    <input class="form-control w-auto mt-2 form-control-sm" placeholder="Email（可选）" asp-for="EditProfile.Email"/>
+                    <div>Email: @(Model.User.Email ?? "空")</div>
 
 
                     <div class="d-flex flex-row gap-2 mt-2">
-                        <button class="btn btn-primary btn-sm w-auto" asp-page-handler="EditProfile" type="submit">保存</button>
-                        <a class="btn btn-danger btn-sm w-auto" asp-route-edit="">取消</a>
+                        <a class="btn btn-primary btn-sm w-auto" asp-route-editProfileFlag="true">更改</a>
+                        <a class="btn btn-danger btn-sm w-auto" asp-page-handler="Logout">登出</a>
+                        <a class="btn btn-danger btn-sm w-auto" asp-page-handler="DeleteAccount">删除账号</a>
+
                     </div>
-                </form>
-                
-            }
-            else
-            {
-                <div>用户名：@Model.User.Username</div>
-                <div>Email: @(Model.User.Email ?? "空")</div>
+                }
+            </div>
 
-
-                <div class="d-flex flex-row gap-2 mt-2">
-                    <a class="btn btn-primary btn-sm w-auto" asp-route-edit="true">更改</a>
-                    <a class="btn btn-danger btn-sm w-auto" asp-page-handler="Logout">登出</a>
-                    <a class="btn btn-danger btn-sm w-auto" asp-page-handler="DeleteAccount">删除账号</a>
-
-                </div>
-            }
         </div>
     </div>
     <div class="mt-1 card bg-light-subtle d-block w-100 pb-3 pt-2 px-5">
-        <div >统计<hr class="my-2"/></div>
-        <div class="mx-auto" style="max-width: 25rem">
-            <div>加入时间：@Model.User.Joined</div>
-            <div>话题与回复数：@(Model.User.CreatedPosts.Count + Model.User.CreatedTopics.Count)</div>
+        <div class="row">
+            <div class="col-6">
+                <div>个人资料<hr class="my-2"/></div>
+                @if (Model.EditDescFlag)
+                {
+                    <form method="post" asp-page-handler="EditDescHandler">
+                        <textarea id="textarea-desc" class="form-control mb-2" asp-for="EditDesc.Description" style="min-height: 20rem">
+                            
+                        </textarea>
+                        <script>
+                            document.getElementById("textarea-desc").innerHTML = `@(Model.User.Description)`
+                        </script>
+                        <button type="submit" class="btn btn-primary btn-sm" >保存</button>
+                    </form>
+                }
+                else
+                {
+                    <div style="font-size: .8rem">
+                        @Html.Raw(Markdig.Markdown.ToHtml(string.IsNullOrWhiteSpace(Model.User.Description) ? "无" : Model.User.Description))
+                        
+                    </div>
+                    <a class="btn btn-secondary btn-sm" asp-route-editDescFlag="true">更改</a>
+                }
+            </div>
+            <div class="col-6">
+                <div >统计<hr class="my-2"/></div>
+                <div class="mx-auto" style="max-width: 25rem">
+                    <div>加入时间：@Model.User.Joined</div>
+                    <div>话题与回复数：@(Model.User.CreatedPosts.Count + Model.User.CreatedTopics.Count)</div>
+                </div>
+            </div>
+
         </div>
+        
     </div>
 </div>

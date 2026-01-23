@@ -38,7 +38,7 @@
         switch (Helper.Evaluate(stuff))
         {
             case Helper.TagType.Icon:
-                Model.Content = Model.Content.Replace(stuff, $"<img style='height: .9rem;' src='{OpenMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff)) ?? "broken"}'/>");
+                Model.Content = Model.Content.Replace(stuff, $"<img style='height: 1.2rem;' src='{OpenMojiIconPack.GetIcon(Helper.GetIconIdFromTag(stuff)) ?? "broken"}'/>");
                 break;
             case Helper.TagType.Quote:
                 // <partial name="Shared/RenderQuote"
@@ -59,6 +59,8 @@
         var frame = $@"
                     <div class=""p-2"">
                             <div class=""d-flex w-100 gap-2 justify-content-end"">
+                                                        
+
                                                     <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
                                                                                     document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
                                                                                         ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
@@ -72,13 +74,24 @@
                                                         }})()"">Copy</button>
                             </div>
                         
-                        <div style='height: 4rem;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
-                            <content>
+                        <div style='height: auto;overflow:hidden;scrollbar-width:none;' id='pre-container-{randStr}-{i}'>
+                            <content-{randomStr}>
+                            
                         </div>
+                                                    <script>
+                                                        function convertRemToPixels(rem) {{
+                                                          // Get the root font-size (usually 16px, but can be customized)
+                                                          const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                                                          return rem * rootFontSize;
+                                                        }}
+                                                            if(document.getElementById('pre-container-{randStr}-{i}').getBoundingClientRect().height<=convertRemToPixels(4)){{
+                                                                document.getElementById('pre-button-{randStr}-{i}').style.display = 'none'
+                                                            }}
+                                                        </script>
                         
                     </div>
                     ";
-        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}",  frame.Replace("<content>", preTags[i].Value));
+        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace($"<content-{randomStr}>", preTags[i].Value));
     }
     for (var i = 0; i < codeTags.Count; i++)
     {

@@ -76,7 +76,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
       if (u == null)
       {
           ModelState.AddModelError( "Username", "用户名或密码错误");
-          return Page(); 
+          return OnGet(); 
       }
 
       HttpContext.Session.SetString("uid", u.Id.ToString());

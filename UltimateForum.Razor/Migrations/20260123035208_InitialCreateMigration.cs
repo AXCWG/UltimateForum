@@ -38,7 +38,7 @@ namespace UltimateForum.Razor.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    CreatedById = table.Column<long>(type: "INTEGER", nullable: false)
+                    CreatedById = table.Column<long>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,8 @@ namespace UltimateForum.Razor.Migrations
                         name: "FK_BoardGroups_Users_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,7 +70,8 @@ namespace UltimateForum.Razor.Migrations
                         name: "FK_Boards_BoardGroups_BoardGroupId",
                         column: x => x.BoardGroupId,
                         principalTable: "BoardGroups",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -124,7 +126,8 @@ namespace UltimateForum.Razor.Migrations
                         name: "FK_Topics_Users_CreaterId",
                         column: x => x.CreaterId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -135,7 +138,7 @@ namespace UltimateForum.Razor.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     TopicId = table.Column<long>(type: "INTEGER", nullable: false),
-                    CreatorId = table.Column<long>(type: "INTEGER", nullable: false),
+                    CreatorId = table.Column<long>(type: "INTEGER", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     AttachmentUuid = table.Column<string>(type: "TEXT", nullable: false)
                 },
@@ -152,7 +155,8 @@ namespace UltimateForum.Razor.Migrations
                         name: "FK_Posts_Users_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateIndex(

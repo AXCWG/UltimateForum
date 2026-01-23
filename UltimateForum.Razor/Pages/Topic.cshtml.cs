@@ -36,14 +36,20 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
 
     public IActionResult OnGetAvatar(long? userUid)
     {
-        return (_db.Users.FirstOrDefault(i=>i.Id == userUid)?.AvatarUuid is null)
-            ? NotFound()
-            :
-            _binaryDbContext.Binaries.FirstOrDefault(i => i.Uuid == _db.Users.FirstOrDefault(i=>i.Id == userUid).AvatarUuid)?.Content is null
-                ?
-                NotFound()
-                : File(_binaryDbContext.Binaries.FirstOrDefault(i => i.Uuid ==  _db.Users.FirstOrDefault(i=>i.Id == userUid).AvatarUuid)?.Content!,
-                    "image/webp");
+        var a = _db.Users.FirstOrDefault(i => i.Id == userUid)?.AvatarUuid;
+        if (a is null)
+        {
+            return NotFound(); 
+        }
+
+        var b = _binaryDbContext.Binaries.Find(a);
+        if (b is null)
+        {
+            return NotFound(); 
+        }
+
+        return File(b.Content, "image/webp"); 
+
     }
 
     public string? Username(long? userUid)

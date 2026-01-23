@@ -19,18 +19,15 @@ builder.Services.AddMemoryCache();
 switch (builder.Configuration["DbType"])
 {
     case "sqlite":
-        builder.Services.AddDbContext<ForumDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"), o=>o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+        builder.Services.AddDbContext<ForumDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")?.CreateDirectoryOfDataSource(), o=>o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         break;
     case "mysql":
         throw new NotImplementedException();
     default:
         throw new Exception("No valid database type configured in appsettings.json");
 }
-using (var db = new BinaryDbContext(builder.Configuration.GetConnectionString("BinaryConnection") ?? throw new Exception("Not initted. ")))
-{
-    db.Database.EnsureCreated();
-}
-builder.Services.AddDbContext<BinaryDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("BinaryConnection")));
+
+builder.Services.AddDbContext<BinaryDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("BinaryConnection")?.CreateDirectoryOfDataSource()));
 
 builder.Services.AddScoped<OpenMojiIconPackHelperService>();
 
@@ -56,6 +53,8 @@ app.MapRazorPages()
 
 using (var scope = app.Services.CreateScope())
 {
+    var binary = scope.ServiceProvider.GetRequiredService<BinaryDbContext>();
+    binary.Database.EnsureCreated();
     var db = scope.ServiceProvider.GetRequiredService<ForumDbContext>();
     db.Database.Migrate(); 
     if (!File.Exists("INIT"))
