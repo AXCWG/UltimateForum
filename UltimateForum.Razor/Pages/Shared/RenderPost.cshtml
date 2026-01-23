@@ -60,19 +60,19 @@
         var randStr = AXHelper.Helpers.StringHelper.RandomString(10);
         //language=html
         var frame = $@"
-                    <div class=""p-2"">
-                            <div class=""d-flex w-100 gap-2 justify-content-end"">
+                    <div class=""p-2 bg-black m-2"">
+                            <div class=""d-flex  w-100 mb-1 gap-2 justify-content-end"">
                                                         
 
-                                                    <button class='btn btn-sm bg-light-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
+                                                    <button class='btn btn-sm bg-dark-subtle' id='pre-button-{randStr}-{i}' onclick=""(()=>{{
                                                                                     document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
                                                                                         ?  document.getElementById('pre-container-{randStr}-{i}').style.height = '4rem'
                                                                                         :  document.getElementById('pre-container-{randStr}-{i}').style.height = 'auto'
                                                                                     document.getElementById('pre-container-{randStr}-{i}').style.height === 'auto'
                                                                                         ? document.getElementById('pre-button-{randStr}-{i}').innerText='˄'
                                                                                         : document.getElementById('pre-button-{randStr}-{i}').innerText='˅'
-                                                                                }})()"">˅</button>
-                                                    <button class='btn btn-sm bg-light-subtle' onclick=""(()=>{{
+                                                                                }})()"">˄</button>
+                                                    <button class='btn btn-sm  bg-dark-subtle' onclick=""(()=>{{
                                                         navigator.clipboard.writeText(document.getElementById('pre-container-{randStr}-{i}').innerText)
                                                         }})()"">Copy</button>
                             </div>
@@ -94,8 +94,8 @@
                         
                     </div>
                     ";
-        // Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace($"<content-{randomStr}>", preTags[i].Value));
-        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", preTags[i].Value); 
+        Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", frame.Replace($"<content-{randomStr}>", preTags[i].Value));
+        // Model.Content = Model.Content.Replace($"{randomStrForPre}{i}{randomStrForPre}", preTags[i].Value); 
     }
     for (var i = 0; i < codeTags.Count; i++)
     {

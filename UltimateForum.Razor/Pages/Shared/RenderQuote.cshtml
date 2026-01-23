@@ -11,7 +11,9 @@
 @inject OpenMojiIconPackHelperService OpenMojiIconPack
 @{
     var post = Model.GetPost(Model.Id);
-    <div class="card p-3 mb-2 mt-2 bg-light-subtle">
+    var tags = Helper.SplitWithDelimiter(post?.Content ?? "", "\\$\\$\\[(.*?)\\]\\$\\$");
+    
+    <div class="card  p-3 mb-2 mt-2 bg-light-subtle">
         <div>
             @if (post?.Creator?.Username is null)
             {
@@ -64,7 +66,6 @@
                                 post.Content = post.Content.Replace(codeTags[i].Value, $"{randomStrForCode}{i}{randomStrForCode}");
                             }
 
-                            var tags = Helper.SplitWithDelimiter(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$");
                             foreach (var stuff in tags)
                             {
                                 switch (Helper.Evaluate(stuff))

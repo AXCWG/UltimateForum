@@ -11,8 +11,8 @@ using UltimateForum.Razor.Db;
 namespace UltimateForum.Razor.Migrations
 {
     [DbContext(typeof(ForumDbContext))]
-    [Migration("20260123050748_InitialCreateMigration2")]
-    partial class InitialCreateMigration2
+    [Migration("20260123131352_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace UltimateForum.Razor.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateMigration : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -136,6 +136,7 @@ namespace UltimateForum.Razor.Migrations
                 {
                     Id = table.Column<long>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    Title = table.Column<string>(type: "TEXT", maxLength: 255, nullable: false),
                     Content = table.Column<string>(type: "TEXT", nullable: false),
                     TopicId = table.Column<long>(type: "INTEGER", nullable: false),
                     CreatorId = table.Column<long>(type: "INTEGER", nullable: true),
