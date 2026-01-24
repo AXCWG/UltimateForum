@@ -1,11 +1,73 @@
 ﻿@page
 @model UltimateForum.Razor.Pages.WriteTopic
 
+<partial name="Validation"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked-highlight/lib/index.umd.js"></script>
+<link rel="stylesheet" href="~/lib/highlight.js/styles/base16/windows-95.css">
+<script src="~/lib/highlight.js/highlight.min.js"></script>
+<script src="~/lib/monaco-editor/min/vs/loader.js" ></script>
+
+<script >
+    const { Marked } = globalThis.marked;
+    const { markedHighlight } = globalThis.markedHighlight;
+    let editorDoc = null;
+    let parseFunc = null;
+    function Init(parse){
+        parseFunc = parse;
+    }
+    function CalledOnInput(){
+        document.getElementById('rendered').innerHTML = parseFunc(editorDoc.getValue());
+        document.getElementById('text-hidden').value = parseFunc(editorDoc.getValue());
+    }
+    require.config({ paths: { 'vs': '@Url.Content("~/lib/monaco-editor/min/vs")' } });
+    require(['vs/editor/editor.main'], function () {
+        editorDoc = monaco.editor.create(document.getElementById('editor'), {
+            value: [
+                'function hello() {',
+                '\tconsole.log("Hello world!");',
+                '}'
+            ].join('\n'),
+            language: 'markdown',
+            theme: 'vs-dark',
+            automaticLayout: true // Resizes if the container changes
+        });
+        
+        console.log(editorDoc.getValue())
+        editorDoc.setValue("");
+      
+        
+        const markedCustom = new Marked(
+            markedHighlight({
+                emptyLangClass: 'hljs',
+                langPrefix: 'hljs language-',
+                highlight(code, lang){
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                }
+            })
+
+        )
+        Init(markedCustom.parse)
+        
+        editorDoc.onDidChangeModelContent((e)=>{
+            console.log(editorDoc.getValue());
+            CalledOnInput();
+        }) 
+    });
+    
+    
+</script>
+
 <div class="display-6">发布话题</div>
+<div class="card bg-dark-subtle mt-2 p-3" id="rendered" style="min-height: 15rem;">
+
+</div>
 <form method="post" asp-page-handler="PostTopic" asp-route-boardid="@Model.BoardId">
     <span asp-validation-for="@Model.Title" class="text-danger mt-2"></span>
     <input asp-for="@Model.Title" class="form-control mt-2" value="@Model.Title"/>
     <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
-    <textarea style="height: 10rem" class="form-control mt-2" asp-for="@Model.Content" id="text"></textarea>
+    <textarea style="height: 0;display: flex" class="opacity-0" asp-for="@Model.Content" id="text-hidden"></textarea>
+    <div style="height: 15rem" class=" mt-2"  id="editor"></div>
     <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
 </form>

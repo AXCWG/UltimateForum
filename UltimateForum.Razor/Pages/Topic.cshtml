@@ -79,7 +79,7 @@
                             <span>@@@Model.TopicData?.CreatedOn</span>
                         }
                     </div>
-                    <div style="font-size: .9rem" class="d-block text-wrap">@Model.TopicData?.Content</div>
+                    <div style="font-size: .9rem" class="d-block text-wrap">@Html.Raw(Model.TopicData?.Content)</div>
                 </div>
                 <br/>
 
