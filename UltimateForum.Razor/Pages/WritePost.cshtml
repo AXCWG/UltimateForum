@@ -1,6 +1,4 @@
 @page
-@using System.Text.RegularExpressions
-@using AXHelper.Extensions
 @using UltimateForum.Razor.Pages.Shared
 @model UltimateForum.Razor.Pages.WritePost
 
@@ -25,7 +23,7 @@
         markedHighlight({
             emptyLangClass: 'hljs', 
             langPrefix: 'hljs language-',
-            highlight(code, lang, info){
+            highlight(code, lang){
                 const language = hljs.getLanguage(lang) ? lang : 'plaintext';
                 return hljs.highlight(code, { language }).value;
             }
@@ -137,12 +135,12 @@
 </div>
 
 
-
-<table class=" p-3 table  table-bordered mt-3">
+<div >
+ <table class=" p-3 table  table-bordered mt-3" style="table-layout: fixed">
     <tbody class="">
     <!-- Topic View -->
     <tr class="h-auto">
-        <td class="p-3">
+        <td class="p-3" style="overflow-wrap: break-word;" >
             <div>
                 <h2 class="mb-4">@Model.TopicData?.Title</h2>
                 <div class="pb-2" style="font-size: .7rem">作者：
@@ -156,7 +154,7 @@
                         <span>@@@Model.TopicData?.CreatedOn</span>
                     }
                 </div>
-                <div style="font-size: .9rem">@Model.TopicData?.Content</div>
+                <div style="font-size: .9rem;" class="d-block">@Model.TopicData?.Content</div>
             </div>
             <div style="height: 2rem">
 
@@ -237,5 +235,7 @@
     }
     </tbody>
 </table>
+   
+</div>
 
 <partial name="Validation"/>

@@ -5,7 +5,11 @@
 @model UltimateForum.Razor.Pages.Topic
 @{
     ViewData["Title"] = Model.TopicData?.Title;
-    
+    <style>
+        html{
+            scroll-behavior: auto !important;
+        }
+    </style>
 }
 
 @section NavView
@@ -49,8 +53,8 @@
             else
             {
                 <div class="d-flex gap-3">
-                    <a asp-page="/Login">登录</a>
-                    <a asp-page="/Register">注册</a>
+                    <a asp-page="/User/Login" id="topic-login-button">登录</a>
+                    <a asp-page="/User/Register" id="topic-register-button">注册</a>
 
                 </div>
             }
@@ -61,7 +65,7 @@
         <tbody class="">
         <!-- Topic View -->
         <tr class="h-auto">
-            <td class="p-3">
+            <td class="p-3" style="overflow-wrap: break-word">
                 <div>
                     <h2 class="mb-4">@Model.TopicData?.Title</h2>
                     <div class="pb-2" style="font-size: .7rem">作者：
@@ -75,7 +79,7 @@
                             <span>@@@Model.TopicData?.CreatedOn</span>
                         }
                     </div>
-                    <div style="font-size: .9rem">@Model.TopicData?.Content</div>
+                    <div style="font-size: .9rem" class="d-block text-wrap">@Model.TopicData?.Content</div>
                 </div>
                 <br/>
 
@@ -173,5 +177,7 @@
             document.getElementById("nav-view").innerHTML += `\n/<a class="ms-2" href='@Url.Page("/Topic", new { TopicId = Model.TopicData?.Id })#${id}'>${title}</a>`;
             console.log(document.getElementById("nav-view").innerHTML);
         }
+        document.getElementById('topic-login-button').href += "?whereyouarefrom=" + encodeURIComponent(location.href);
+        document.getElementById('topic-register-button').href += "?whereyouarefrom=" + encodeURIComponent(location.href);
     </script>
 }

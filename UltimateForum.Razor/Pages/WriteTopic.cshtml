@@ -1,0 +1,11 @@
+﻿@page
+@model UltimateForum.Razor.Pages.WriteTopic
+
+<div class="display-6">发布话题</div>
+<form method="post" asp-page-handler="PostTopic" asp-route-boardid="@Model.BoardId">
+    <span asp-validation-for="@Model.Title" class="text-danger mt-2"></span>
+    <input asp-for="@Model.Title" class="form-control mt-2" value="@Model.Title"/>
+    <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
+    <textarea style="height: 10rem" class="form-control mt-2" asp-for="@Model.Content" id="text"></textarea>
+    <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
+</form>

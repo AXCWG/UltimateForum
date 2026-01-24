@@ -11,7 +11,7 @@ public class Topic
     public long Id { get; set; }
     public required string Title { get; set;  }
     public required string Content { get; set;  }
-    public Board Board { get; set; } = null!;
+    public required Board Board { get; set; } 
     public long BoardId { get; set; }
     public required User? Creater { get; set; }
     public long? CreaterId { get; set; }

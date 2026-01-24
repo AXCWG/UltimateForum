@@ -36,12 +36,12 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
     {
         if (TopicId is null)
         {
-            return BadRequest(); 
+            return RedirectToPage("/Index"); 
         }
 
         if (!_db.Topics.Any(i => i.Id == TopicId))
         {
-            return NotFound();
+            return RedirectToPage("/Index");
         }
 
         if (_config["AllowAnonymousPost"] != "True" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
@@ -60,7 +60,7 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
         }
         #region UserRetrieve
 
-        var u = _db.Users.FirstOrDefault(i => i.Id == HttpContext.Session.GetLong("uid"));
+        var u = _db.Users.Find(HttpContext.Session.GetLong("uid"));
         
         if (u is null && _config["AllowAnonymousPost"] != "True")
         {

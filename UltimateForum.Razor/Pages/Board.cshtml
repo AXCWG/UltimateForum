@@ -11,9 +11,12 @@
     <a class="ms-2 me-2" id="board" asp-page="/Board" asp-route-boardid="@Model.BoardId">@Model.BoardSpec?.Name</a>
     }
 
-<div class="mb-3">
-    <a asp-page="/Index" >@{ var e = "<==";<span>@e</span>} 主页</a>
-</div>
+    <div class="mb-3">
+        <a asp-page="/Index" >@{ var e = "<==";<span>@e</span>} 主页</a>
+    </div>
+    <div class="mb-3">
+        <a class="btn btn-primary btn-sm" asp-page="/WriteTopic" asp-route-boardid="@Model.BoardId">+新话题</a>
+    </div>
 <table class="table table-bordered">
     <thead>
     <tr>

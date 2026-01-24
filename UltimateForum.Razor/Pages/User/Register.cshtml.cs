@@ -3,6 +3,7 @@ using System.Text.Json;
 using AXHelper.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using UltimateForum.Razor.Db;
 
 namespace UltimateForum.Razor.Pages.User;
@@ -25,6 +26,8 @@ public class Register(ForumDbContext dbContext) : PageModel
     }
     [BindProperty]
     public RegisterFormModel? Form { get; set; }
+    [BindProperty(SupportsGet = true)]
+    public string? WhereYouAreFrom { get; set; }
     public void OnGet()
     {
         
@@ -38,8 +41,14 @@ public class Register(ForumDbContext dbContext) : PageModel
             return Page(); 
         }
 
+        if (_dbContext.Users.Any(i => i.Username == Form.Username))
+        {
+            ModelState.AddModelError("Username", "用户名已存在");
+            return Page();
+        }
         try
         {
+            
             _dbContext.Users.Add(new()
             {
                 Username = Form.Username,
@@ -64,6 +73,6 @@ public class Register(ForumDbContext dbContext) : PageModel
             return Page(); 
         }
         HttpContext.Session.SetString("uid", id.Value.ToString());
-        return RedirectToPage("/Index");
+        return WhereYouAreFrom is null ? RedirectToPage("/Index") : Redirect(WhereYouAreFrom);
     }
 }

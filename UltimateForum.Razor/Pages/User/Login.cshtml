@@ -1,0 +1,30 @@
+﻿@page "/User/Login"
+@model UltimateForum.Razor.Pages.User.Login
+
+
+<div class=" mx-auto  d-flex flex-column justify-content-center align-items-center col-6">
+    <div class="w-100">
+        <h1 class="display-4">登录</h1>
+        <div class="card p-4 ">
+            <form method="post" asp-page-handler="Login" asp-route-whereyouarefrom="@Model.WhereYouAreFrom">
+                <div class="d-flex flex-column gap-3">
+                    <span class="text-danger" asp-validation-for="Username" ></span>
+                    <input class="form-control" placeholder="用户名" asp-for="Username"/>
+                    
+                  
+                    
+                    <span class="text-danger" asp-validation-for="Password" ></span>
+                    <input type="password" class="form-control" placeholder="密码" asp-for="Password"/>
+                    
+                   
+                    <button class="btn btn-primary" type="submit">登录</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+    
+</div>
+
+<partial name="Validation"/>
