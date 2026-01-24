@@ -2,131 +2,82 @@
 @using UltimateForum.Razor.Pages.Shared
 @model UltimateForum.Razor.Pages.WritePost
 
+<partial name="Validation"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked-highlight/lib/index.umd.js"></script>
 <link rel="stylesheet" href="~/lib/highlight.js/styles/base16/windows-95.css">
 <script src="~/lib/highlight.js/highlight.min.js"></script>
-<script>
-    let parseFunc = null; 
+<script src="~/lib/monaco-editor/min/vs/loader.js" ></script>
+
+<script >
+    const { Marked } = globalThis.marked;
+    const { markedHighlight } = globalThis.markedHighlight;
+    let editorDoc = null;
+    let parseFunc = null;
     function Init(parse){
         parseFunc = parse;
     }
     function CalledOnInput(){
-        document.getElementById('rendered').innerHTML = parseFunc(document.getElementById('text').value);
-        document.getElementById('text-hidden').value = parseFunc(document.getElementById('text').value);
+        document.getElementById('rendered').innerHTML = parseFunc(editorDoc.getValue());
+        document.getElementById('text-hidden').value = parseFunc(editorDoc.getValue());
     }
+    require.config({ paths: { 'vs': '@Url.Content("~/lib/monaco-editor/min/vs")' } });
+    require(['vs/editor/editor.main'], function () {
+        editorDoc = monaco.editor.create(document.getElementById('editor'), {
+            value: [
+                'function hello() {',
+                '\tconsole.log("Hello world!");',
+                '}'
+            ].join('\n'),
+            language: 'markdown',
+            theme: 'vs-dark',
+            automaticLayout: true // Resizes if the container changes
+        });
+        
+        console.log(editorDoc.getValue())
+        editorDoc.setValue("");
+      
+        
+        const markedCustom = new Marked(
+            markedHighlight({
+                emptyLangClass: 'hljs',
+                langPrefix: 'hljs language-',
+                highlight(code, lang){
+                    const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                    return hljs.highlight(code, { language }).value;
+                }
+            })
+
+        )
+        Init(markedCustom.parse)
+        
+        editorDoc.onDidChangeModelContent((e)=>{
+            CalledOnInput();
+        }) 
+    });
+    
+    
 </script>
 <script type="module">
-    const { Marked } = globalThis.marked;
-    const { markedHighlight } = globalThis.markedHighlight;
-    const markedCustom = new Marked(
-        markedHighlight({
-            emptyLangClass: 'hljs', 
-            langPrefix: 'hljs language-',
-            highlight(code, lang){
-                const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-                return hljs.highlight(code, { language }).value;
-            }
-        })
-    )
-    Init(markedCustom.parse)
-    function insertAtIndex(originalString, stringToInsert, position) {
-        return `${originalString.slice(0, position)}${stringToInsert}${originalString.slice(position)}`;
-    }
-    
-    document.getElementById('text').addEventListener('input',()=>CalledOnInput())
-    document.getElementById('text').addEventListener('keydown', (e)=>{
-        switch (e.code){
-            case 'Tab':
-                (()=>{
-                    e.preventDefault();
-                    let pos = e.currentTarget.selectionStart;
-                    e.currentTarget.value = insertAtIndex(e.currentTarget.value, '\t', pos);
-                    e.currentTarget.selectionStart = pos + 1;
-                    e.currentTarget.selectionEnd = pos + 1;
-                    CalledOnInput();
-                })()
-                break;
-            case 'BracketLeft':
-                if(e.shiftKey){
-                    let pos = e.currentTarget.selectionStart;
-                    e.currentTarget.value = insertAtIndex(e.currentTarget.value, '}', pos);
-                    e.currentTarget.selectionStart = pos;
-                    e.currentTarget.selectionEnd = pos;
-                    CalledOnInput();
-                }else{
-                    let pos = e.currentTarget.selectionStart;
-                    e.currentTarget.value = insertAtIndex(e.currentTarget.value, ']', pos);
-                    e.currentTarget.selectionStart = pos;
-                    e.currentTarget.selectionEnd = pos;
-                    CalledOnInput(); 
-                }
-                break;
-        }
-    })
+   
+   
   </script>
 <div class="display-6">发布回复</div>
 <div class="container">
+  
     <div class="row ">
         <div class="card bg-dark-subtle mt-2 p-3" id="rendered" style="min-height: 20rem;">
-        
+
         </div>
         <div class="card d-block mt-2 p-3 bg-dark-subtle gap-2">
-            <div class="dropdown">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
-                    Icons
-                </button>
-                <div class="dropdown-menu p-0">
-                    <div class=" gap-2 p-3">
-                        @{
-                            var g = Model.IconPackHelperService.GetAllIcons().Chunk(200).ToArray();
-                            <div style="max-width: 40rem;">
-                                <ul class="nav nav-tabs " style="flex-wrap: nowrap;overflow: scroll;scrollbar-width: thin" id="emote" role="tablist">
-                                    @for (var i = 1; i < g.Length - 1; i++)
-                                    {
-                                        <li class="nav-item" role="presentation">
-                                            <button style="height: 3rem;" class=" nav-link @(i == 1 ? "active" : "")"
-                                                    id="emote-@i-tab" data-bs-toggle="tab" data-bs-target="#emote-@i-tab-pane"
-                                                    type="button" role="tab" aria-controls="home-tab-pane">
-                                                <div class="d-flex justify-content-center align-items-center gap-2">
-                                                    <span>@i</span>
-                                                    <img style="width: 1.3rem;height: 1.3rem" src="@Url.Content("~/" + g[i][0].Value)" alt="@g[i][0].Value"/>
-                                                </div>
-                                            </button>
-                                        </li>
-                                    }
-
-                                </ul>
-                            </div>
-
-                            <div class="tab-content" id="emoteContent">
-                                @for (var i = 1; i < g.Length - 1; i++)
-                                {
-                                    <div class="tab-pane fade @(i == 1 ? "show active" : "")" id="emote-@i-tab-pane" role="tabpanel" tabindex="0">
-                                        <div class="">
-                                            @foreach (var e in g[i])
-                                            {
-                                                <button onclick='(()=>{
-                                    document.getElementById("text").value += "$$[!icon ico=\"@e.Key\"]$$";
-                                    CalledOnInput(); 
-                                    })()' class="btn p-0" style="width: 2rem;height: 2rem;background-image: url('@Url.Content("~/" + e.Value)');background-size: contain"></button>
-                                            }
-                                        </div>
-
-                                    </div>
-                                }
-                            </div>}
-                    </div>
-
-                </div>
-            </div>
+          
 
             <form method="post" asp-page-handler="PostPost" asp-route-topicid="@Model.TopicId">
                 <span asp-validation-for="@Model.Title" class="text-danger mt-2"></span>
                 <input asp-for="@Model.Title" class="form-control mt-2" value="Re: @Model.TopicData?.Title"/>
                 <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
                 <textarea style="opacity: 0;height: 0;display: flex" class="p-0 border-0" asp-for="@Model.Content" id="text-hidden"></textarea>
-                <textarea style="resize: none;height: 10rem" class="form-control mt-2"  id="text"></textarea>
+                <div style="resize: none;height: 15rem" class="mt-2"  id="editor"></div>
                 <button class="btn btn-primary btn-sm mt-2" type="submit">发送</button>
             </form>
         </div>
@@ -192,7 +143,7 @@
             <td class="p-3">
                 <div>
                     <div class="p-0 m-0 d-flex justify-content-between"><span>Re：@Model.TopicData?.Title</span><button onclick='(()=>{
-                        document.getElementById("text").value +="$$[!quote content=\"@p.Id\"]$$";
+                        editorDoc.setValue(editorDoc.getValue() + "$$[!quote content=\"@p.Id\"]$$") ;
                         CalledOnInput();
                     })()'>引用</button></div>
                     <div class="pb-2" style="font-size: .7rem">作者：
@@ -237,5 +188,3 @@
 </table>
    
 </div>
-
-<partial name="Validation"/>

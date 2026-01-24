@@ -1,12 +1,4 @@
 @using System.Text.RegularExpressions
-@using CsharpToColouredHTML.Core.Emitters.HTML
-@using Markdig
-@using Markdown.ColorCode
-@using System.Xml.Linq
-@using AngleSharp.Html
-@using AngleSharp.Html.Parser
-@using Ganss.Xss
-@using Markdown.ColorCode.CSharpToColoredHtml
 @model UltimateForum.Razor.Pages.Shared.RenderQuote
 @inject OpenMojiIconPackHelperService OpenMojiIconPack
 @{
@@ -35,7 +27,7 @@
                        <div>
                         @{
                             // DRY's a joke.
-                            var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
+                            // var randomStr = AXHelper.Helpers.StringHelper.RandomString(8);
                             
                             // Remove Server-side Markdown rendering. 
                             // var stuffs = Regex.Matches(post.Content, "\\$\\$\\[(.*?)\\]\\$\\$").ToList();
@@ -120,7 +112,7 @@
                                 post.Content = post.Content.Replace($"{randomStrForCode}{i}{randomStrForCode}", codeTags[i].Value);
                             }
                             
-                            @Html.Raw(post.Content);
+                            @Html.Raw(post.Content)
                         }
                     </div>
                    }
