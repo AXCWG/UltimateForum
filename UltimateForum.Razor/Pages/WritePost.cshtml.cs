@@ -43,10 +43,10 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
         {
             return RedirectToPage("/Index");
         }
-
+    
         if (_config["AllowAnonymousPost"] != "True" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
         {
-            return RedirectToPage("/Index"); 
+            return RedirectToPage("/User/Login"); 
         }
         TopicData = _db.Topics.Include(i=>i.Creater).Include(i=>i.Posts).ThenInclude(i=>i.Creator).First(i => i.Id == TopicId);
         return Page(); 

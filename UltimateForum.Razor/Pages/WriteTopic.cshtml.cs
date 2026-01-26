@@ -30,7 +30,7 @@ public class WriteTopic(ForumDbContext forumDbContext, IConfiguration configurat
         
         if (Configuration["AllowAnonymousTopic"]?.ToLowerInvariant() != "true" && (HttpContext.Session.GetLong("uid") is null || _forumDbContext.Users.Any(i=>i.Id == HttpContext.Session.GetLong("uid"))))
         {
-            return RedirectToPage("/Index");
+            return RedirectToPage("/User/Login");
         }
 
         return Page(); 
