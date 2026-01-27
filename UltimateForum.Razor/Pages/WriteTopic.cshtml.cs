@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Ganss.Xss;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using UltimateForum.Razor.Db;
@@ -54,10 +55,13 @@ public class WriteTopic(ForumDbContext forumDbContext, IConfiguration configurat
             return BadRequest(); 
         }
 
+        var sanitizer = new HtmlSanitizer();
+        sanitizer.AllowedTags.Add("class"); 
+        
         var topic = new Db.Models.Topic
         {
             Title = Title,
-            Content = Content,
+            Content = sanitizer.Sanitize(Content),
             Creater = user ?? _forumDbContext.Users.Find(1L),
             CreatedOn = DateTime.Now,
             Board = board 

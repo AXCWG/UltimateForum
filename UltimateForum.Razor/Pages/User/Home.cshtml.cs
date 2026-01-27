@@ -44,6 +44,7 @@ public class Home(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext
 
     [BindProperty] 
     public EditDescModel EditDesc { get; set; } = null!;
+    
     public IActionResult OnGet()
     {
         var u = _dbContext.Users.Include(i=>i.CreatedPosts).Include(i=>i.CreatedTopics).FirstOrDefault(i => i.Id == HttpContext.Session.GetLong("uid"));
@@ -51,7 +52,7 @@ public class Home(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext
         {
             return RedirectToPage("/Index");
         }
-
+        
         User = u;
         if (EditProfileFlag)
         {
@@ -123,7 +124,6 @@ public class Home(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext
     public IActionResult OnPostEditDescHandler()
     {
         var sanitizer = new HtmlSanitizer(); 
-        
         _dbContext.Users.Where(i => i.Id == HttpContext.Session.GetLong("uid"))
             .ExecuteUpdate(i => i.SetProperty(p => p.Description, EditDesc.Description is null ? null :sanitizer.Sanitize(EditDesc.Description)));
         return RedirectToPage("/User/Home");

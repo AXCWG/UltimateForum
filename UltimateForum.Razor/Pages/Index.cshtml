@@ -1,5 +1,6 @@
 ﻿@page
 @using AXHelper.Extensions
+@using UltimateForum.Razor.Pages.User
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
@@ -36,7 +37,10 @@
                     <div class="d-flex flex-row gap-2">
                         <button class="btn btn-danger" type="submit" asp-page-handler="Logout">登出</button>
                         <a class="btn btn-primary"  asp-page="/User/Home">个人页</a>
-                        
+                        @if (HttpContext.Session.GetLong("uid") == 2)
+                        {
+                            <a class="btn btn-primary" asp-page="/Dashboard">配置</a>
+                        } 
                     </div> 
                     
                 </form>

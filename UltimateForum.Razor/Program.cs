@@ -1,11 +1,13 @@
 using AXHelper.Extensions;
 using AXHelper.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Db;
 using UltimateForum.Db.Models;
 using UltimateForum.Razor;
 using UltimateForum.Razor.Db;
 using UltimateForum.Razor.Db.Models;
+using UltimateForum.Razor.Pages.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,11 +43,14 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseSession(); 
 app.UseRouting();
 
 app.UseAuthorization();
+
+
 
 app.MapStaticAssets();
 app.MapRazorPages()

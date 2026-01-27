@@ -34,11 +34,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\AXHelper\AXHelper\AXHelper.csproj" />
+      <Folder Include="wwwroot\assets\icons\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\assets\icons\" />
+      <Reference Include="AXHelper">
+        <HintPath>lib\AXHelper.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

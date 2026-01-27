@@ -46,16 +46,19 @@
             <input placeholder="搜索" class="form-control form-control-sm w-auto"/>
         </div>
         <div>
-            @if (Model.Username(HttpContext.Session.GetLong("uid")) is not null)
+
+            @{
+                var userUid = HttpContext.Session.GetLong("uid");
+            }
+            @if (Model.Username(userUid) is not null)
             {
-                <a asp-page="/User/Home">@Model.Username(HttpContext.Session.GetLong("uid"))</a>
+                <a asp-page="/User/Home">@Model.Username(userUid)</a>
             }
             else
             {
                 <div class="d-flex gap-3">
                     <a asp-page="/User/Login" id="topic-login-button">登录</a>
                     <a asp-page="/User/Register" id="topic-register-button">注册</a>
-
                 </div>
             }
         </div>

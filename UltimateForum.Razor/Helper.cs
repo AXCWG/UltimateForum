@@ -1,5 +1,7 @@
 using System.Text.RegularExpressions;
 using AXHelper.Extensions;
+using Microsoft.EntityFrameworkCore;
+using UltimateForum.Db.Models;
 
 namespace UltimateForum.Razor;
 
@@ -109,5 +111,18 @@ public static class Helper
             res[i] =  res[i].Trim();
         }
         return res;
+    }
+
+    extension(DbSet<User> users)
+    {
+        public bool UserAllowedToDoAction(long? uid, bool anonymousAllow)
+        {
+            if (uid is null &&anonymousAllow)
+            {
+                return true;
+            }
+
+            return users.Any(i => i.Id == uid);
+        }
     }
 }

@@ -18,7 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\AXHelper\AXHelper\AXHelper.csproj" />
+      <Reference Include="AXHelper">
+        <HintPath>..\UltimateForum.Razor\lib\AXHelper.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

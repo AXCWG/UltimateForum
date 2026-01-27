@@ -1,5 +1,4 @@
 <Solution>
-  <Project Path="../AXHelper/AXHelper/AXHelper.csproj" />
   <Project Path="UltimateForum.Razor/UltimateForum.Razor.csproj" />
   <Project Path="UltimateForum.Tester/UltimateForum.Tester.csproj" />
 </Solution>

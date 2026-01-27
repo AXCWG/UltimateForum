@@ -46,7 +46,7 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
     
         if (_config["AllowAnonymousPost"] != "True" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
         {
-            return RedirectToPage("/User/Login"); 
+            return RedirectToPage("/User/Login", new{WhereYouAreFrom=HttpContext.Request.Path + "?topicid="+TopicId}); 
         }
         TopicData = _db.Topics.Include(i=>i.Creater).Include(i=>i.Posts).ThenInclude(i=>i.Creator).First(i => i.Id == TopicId);
         return Page(); 
