@@ -8,6 +8,7 @@
 <script src="~/lib/highlight.js/highlight.min.js"></script>
 <script src="~/lib/monaco-editor/min/vs/loader.js" ></script>
 
+@* ReSharper disable once Html.PathError *@
 <script >
     const { Marked } = globalThis.marked;
     const { markedHighlight } = globalThis.markedHighlight;
@@ -50,7 +51,7 @@
         )
         Init(markedCustom.parse)
         
-        editorDoc.onDidChangeModelContent((e)=>{
+        editorDoc.onDidChangeModelContent(()=>{
             console.log(editorDoc.getValue());
             CalledOnInput();
         }) 
@@ -65,7 +66,7 @@
 </div>
 <form method="post" asp-page-handler="PostTopic" asp-route-boardid="@Model.BoardId">
     <span asp-validation-for="@Model.Title" class="text-danger mt-2"></span>
-    <input asp-for="@Model.Title" class="form-control mt-2" value="@Model.Title"/>
+    <input placeholder="标题" asp-for="@Model.Title" class="form-control mt-2" value="默认标题"></input>
     <span asp-validation-for="@Model.Content" class="text-danger mt-2"></span>
     <textarea style="height: 0;display: flex" class="opacity-0" asp-for="@Model.Content" id="text-hidden"></textarea>
     <div style="height: 15rem" class=" mt-2"  id="editor"></div>

@@ -1,4 +1,5 @@
 ﻿@page
+@using System.Text.RegularExpressions
 @using AXHelper.Extensions
 @using UltimateForum.Razor.Pages.User
 @model IndexModel
@@ -8,7 +9,18 @@
 <div style="max-width: 60rem" class="row mx-auto gap-md-0 gap-4">
     <div class="col-md-8 d-flex flex-column justify-content-center ">
         
-        <h1 class="display-5 m-0">欢迎来到 @Model.Configuration["ForumName"]</h1>
+        <h1 class="display-5 m-0">@{
+                                      var temp = Model.Configuration["ForumNameIndexWelcomePhrase"];
+                                      if (temp is null)
+                                      {
+                                          <span></span>
+                                          return; 
+                                      }
+
+                                      var cs = Model.Configuration.AsEnumerable();
+                                      var res= Helper.GenericTemplateReplace(temp, "\\{\\{(.*?)\\}\\}", replacements: cs.Select(i => (i.Key, i.Value!)).ToArray());
+                                      <span>@res</span>
+                                  }</h1>
         <div>@Model.Configuration["ForumDescription"]</div>
     </div>
     <div class="col-md-4">

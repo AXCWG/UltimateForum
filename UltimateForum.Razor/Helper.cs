@@ -74,6 +74,31 @@ public static class Helper
         throw new InvalidOperationException();
     }
 
+    public static string GenericTemplateReplace(string source, string regex, params (string keyInSource, string value)[] replacements)
+    {
+        var templates = Regex.Matches(source, regex).Select(i => i.Value).ToList(); 
+        var variables = new List<string>(templates);
+        for (int i = 0; i < variables.Count; i++)
+        {
+            variables[i] = variables[i].Replace("{{", "");
+            variables[i] = variables[i].Replace("}}", "");
+        }
+
+        variables = variables.Select(i => i.Trim()).ToList(); 
+        var res = ""; 
+        res = source; 
+        for (var index = 0; index < templates.Count; index++)
+        {
+            
+            var template = templates[index];
+            res = res.Replace(template, replacements.FirstOrDefault(i => i.keyInSource == variables[index]).value);
+        }
+
+        res=  res.Replace("\\{", "{");
+        res = res.Replace("\\}", "}");
+        return res; 
+    }
+
     public static List<string> SplitWithDelimiter(string source, string regex)
     {
         var m = Regex.Matches(source, regex).Select(i => i).ToList();

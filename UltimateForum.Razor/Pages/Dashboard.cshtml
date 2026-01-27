@@ -1,6 +1,48 @@
 @page
 @model UltimateForum.Razor.Pages.Dashboard
+@{ ViewData["Title"] = "设置页";}
 
-<div class="card">
-    s sss
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 p-1 d-flex flex-column gap-2">
+            <div class="card p-3 bg-dark-subtle">
+                <h2 class="fw-lighter">基本信息</h2>
+                <div>
+                    <form method="post">
+                        <img src="~/assets/forum.jpg" alt="forum-icon"/><br/>
+                        <span asp-validation-for="@Model.NewName" class="text-danger mt-2"></span>
+                        <div class="mt-2 d-flex flex-column gap-2">
+                            <span style="font-weight: 1">网站名称：</span><input id="new-name" class="form-control m-0" value="@Model.Config["ForumName"]" asp-for="NewName"/>
+                            <span style="font-weight: 1">已注册用户：@Model.UserCount()</span>
+                            <span style="font-weight: 1">话题数：@Model.TopicCount()</span>
+                            <span style="font-weight: 1">回复数：@Model.PostCount()</span>
+                            <button class="btn btn-primary" asp-page-handler="EditName" type="submit">保存</button>
+
+                        </div>
+                        
+                    </form>
+                    
+                </div>
+            </div>
+            <div class="card p-3 bg-dark-subtle">
+                <div>
+                    <h2 class="fw-lighter">主页</h2>
+                    <form method="post">
+                        <span asp-validation-for="@Model.ForumNameIndexWelcomePhrase" class="text-danger mt-2"></span>
+                        <label for="forum-welcome-phrase">欢迎语</label>
+                        <input id="forum-welcome-phrase" class="form-control" asp-for="ForumNameIndexWelcomePhrase" value="@Model.Config["ForumNameIndexWelcomePhrase"]"/>
+                        <span asp-validation-for="@Model.ForumDescription" class="text-danger mt-2"></span>
+                        <label for="forum-desc-input">介绍文</label>
+                        <input id="forum-desc-input" class="form-control" asp-for="@Model.ForumDescription" value="@Model.Config["ForumDescription"]"/>
+                        <button type="submit" class="btn btn-primary" asp-page-handler="SaveIndexBlock">保存</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-8 p-1 ">
+            <div class="card p-3 bg-dark-subtle">dd</div>
+        </div>
+    </div>
 </div>
+
+<partial name="Validation"/>

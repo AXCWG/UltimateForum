@@ -32,7 +32,7 @@ switch (builder.Configuration["DbType"])
 builder.Services.AddDbContext<BinaryDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("BinaryConnection")?.CreateDirectoryOfDataSource()));
 
 builder.Services.AddScoped<OpenMojiIconPackHelperService>();
-
+builder.Services.AddScoped<AppConfiguration>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,7 +61,8 @@ using (var scope = app.Services.CreateScope())
     var binary = scope.ServiceProvider.GetRequiredService<BinaryDbContext>();
     binary.Database.EnsureCreated();
     var db = scope.ServiceProvider.GetRequiredService<ForumDbContext>();
-    db.Database.Migrate(); 
+    db.Database.Migrate();
+    
     if (!File.Exists("INIT"))
     {
         var password = StringHelper.RandomString(8);
