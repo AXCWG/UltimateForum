@@ -1,8 +1,10 @@
 @page
 @using System.Globalization
+@using AXHelper.Extensions
 @using UltimateForum.Razor.Pages.Shared
 @using UltimateForum.Razor.Pages.User
 @model UltimateForum.Razor.Pages.Topic
+@inject AppConfiguration Config
 @{
     ViewData["Title"] = Model.TopicData?.Title;
     <style>
@@ -42,7 +44,29 @@
     </div>
     <div class="d-flex justify-content-between align-items-baseline gap-3">
         <div class="d-flex gap-3">
-            <a class="btn btn-primary btn-sm " asp-page="/WritePost" asp-route-topicid="@Model.TopicId">发布回复</a>
+            @* Ugly shit. *@
+            @if (Model.IsAuthorized())
+            {
+                <a class="btn btn-primary btn-sm " asp-page="/WritePost" asp-route-topicid="@Model.TopicId">发布回复</a>
+
+            }
+            else
+            {
+                if (Config["AllowAnonymousPost"].ParseBool())
+                {
+                    <a class="btn btn-primary btn-sm " asp-page="/WritePost" asp-route-topicid="@Model.TopicId">发布回复</a>
+
+                }
+                else
+                {
+                    if (Config["ShowButtonWhenFeatureDisabled"].ParseBool())
+                    {
+                        <a class="btn btn-primary btn-sm " asp-page="/WritePost" asp-route-topicid="@Model.TopicId">发布回复</a>
+
+                    }
+                }
+            }
+
             <input placeholder="搜索" class="form-control form-control-sm w-auto"/>
         </div>
         <div>
@@ -52,7 +76,7 @@
             }
             @if (Model.Username(userUid) is not null)
             {
-                <a asp-page="/User/Home">@Model.Username(userUid)</a>
+                <a asp-page="/User/Home">@(Model.Username(userUid))</a>
             }
             else
             {
@@ -78,7 +102,7 @@
                         }
                         else
                         {
-                            <a asp-page="/">@Model.TopicData.Creater.Username</a>
+                            <a asp-page="/">@(Model.TopicData.Creater.DisplayName ??  Model.TopicData.Creater.Username)</a>
                             <span>@@@Model.TopicData?.CreatedOn</span>
                         }
                     </div>
@@ -127,7 +151,7 @@
                                 <div class="p-0 m-0">@p.Title</div>
                                 <div class="pb-2" style="font-size: .7rem">作者：
 
-                                    <a asp-page="/">@(p.Creator?.Username ?? "已删除")</a>
+                                    <a asp-page="/">@(p.Creator?.DisplayName ??  p.Creator?.Username ?? "已删除")</a>
                                     <span>@@@p.CreatedAt</span>
 
                                 </div>
@@ -151,7 +175,7 @@
                                     <br/>
                                 }
 
-                                <a asp-page="/">@(p.Creator?.Username ?? "已删除") </a>
+                                <a asp-page="/">@(p.Creator?.DisplayName ?? p.Creator?.Username ?? "已删除") </a>
                                 <div class="text-secondary-emphasis">加入：@(p.Creator?.Joined.ToString(CultureInfo.CurrentCulture) ?? "已删除")</div>
 
 

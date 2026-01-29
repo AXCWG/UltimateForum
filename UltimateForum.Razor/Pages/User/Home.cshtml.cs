@@ -25,6 +25,7 @@ public class Home(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext
     public class EditProfileModel
     {
         public string? Email { get; set; }
+        public string? DisplayName { get; set; }
     }
     [BindProperty]
     public EditProfileModel EditProfile { get; set; } = null!;
@@ -72,7 +73,11 @@ public class Home(ForumDbContext forumDbContext, BinaryDbContext binaryDbContext
 
     public IActionResult OnPostEditProfile()
     {
-        _dbContext.Users.Where(i=>i.Id == HttpContext.Session.GetLong("uid")).ExecuteUpdate(i => i.SetProperty(u=>u.Email, EditProfile.Email));
+        var u = _dbContext.Users.Where(i=>i.Id == HttpContext.Session.GetLong("uid"));
+            
+            u.ExecuteUpdate(i => i.SetProperty(u=>u.Email, EditProfile.Email));
+            u.ExecuteUpdate(i => i.SetProperty(u => u.DisplayName, EditProfile.DisplayName)); 
+        
         return RedirectToPage("/User/Home"); 
     }
 

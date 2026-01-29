@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Razor.Db;
 using UltimateForum.Razor.Db.Models;
+using UltimateForum.Razor.Pages.User;
 
 namespace UltimateForum.Razor.Pages;
 
@@ -57,6 +58,7 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
         return _db.Users.FirstOrDefault(i => i.Id == userUid)?.Username; 
     }
 
+    public string? DisplayName(long? userUid) => _db.Users.Find(userUid)?.Username; 
     public Post? GetPost(long? postId)
     {
         if (postId is null)
@@ -66,4 +68,6 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
 
         return _db.Posts.FirstOrDefault(i => i.Id == postId);
     }
+
+    public bool IsAuthorized() => _db.Users.Find(HttpContext.Session.GetLong("uid")) != null;
 }

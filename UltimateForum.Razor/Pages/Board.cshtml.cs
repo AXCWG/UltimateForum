@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Razor.Db;
+using UltimateForum.Razor.Pages.User;
 
 namespace UltimateForum.Razor.Pages;
 
@@ -25,4 +26,6 @@ public class Board(ForumDbContext forumDbContext) : PageModel
         BoardSpec = _forumDbContext.Boards.Include(i=>i.Topics).ThenInclude(i=>i.Posts.OrderByDescending(i=>i.CreatedAt)).ThenInclude(i=>i.Creator).FirstOrDefault(i => i.Id == BoardId) ?? throw new InvalidOperationException("This should not happen. ");
         return Page(); 
     }
+    public bool IsAuthorized() => _forumDbContext.Users.Find(HttpContext.Session.GetLong("uid")) != null;
+    
 }

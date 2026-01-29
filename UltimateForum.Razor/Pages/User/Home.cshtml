@@ -23,6 +23,9 @@
                 {
                     <form method="post">
                         <div>用户名：@Model.User.Username</div>
+                        <span class="text-danger" asp-validation-for="EditProfile.DisplayName" ></span>
+                        <input class="form-control w-auto mt-2 form-control-sm" placeholder="显示名" asp-for="EditProfile.DisplayName"/>
+                        <span class="text-danger" asp-validation-for="EditProfile.Email" ></span>
                         <input class="form-control w-auto mt-2 form-control-sm" placeholder="Email（可选）" asp-for="EditProfile.Email"/>
 
 
@@ -36,6 +39,7 @@
                 else
                 {
                     <div>用户名：@Model.User.Username</div>
+                    <div>显示名：@(string.IsNullOrWhiteSpace(Model.User.DisplayName) ? "无" : Model.User.DisplayName)</div>
                     <div>Email: @(Model.User.Email ?? "空")</div>
 
 
@@ -88,3 +92,5 @@
         
     </div>
 </div>
+
+<partial name="Validation"/>

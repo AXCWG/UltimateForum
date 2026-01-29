@@ -44,7 +44,7 @@ public class WritePost(ForumDbContext db, IConfiguration config, OpenMojiIconPac
             return RedirectToPage("/Index");
         }
     
-        if (_config["AllowAnonymousPost"] != "True" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
+        if (_config["AllowAnonymousPost"]?.ToLowerInvariant() != "true" && !_db.Users.Any(i => i.Id == HttpContext.Session.GetLong("uid")))
         {
             return RedirectToPage("/User/Login", new{WhereYouAreFrom=HttpContext.Request.Path + "?topicid="+TopicId}); 
         }

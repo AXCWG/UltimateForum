@@ -1,9 +1,11 @@
 @page
+@using AXHelper.Extensions
 @using UltimateForum.Razor.Db.Models
 @model UltimateForum.Razor.Pages.Board
 @{
     ViewData["Title"] = Model.BoardSpec.Name + "板块";
 }
+@inject AppConfiguration Config
 @section NavView
 {
     <a asp-page="/Index" id="index" class="me-2">首页</a>
@@ -15,7 +17,24 @@
         <a asp-page="/Index" >@{ var e = "<==";<span>@e</span>} 主页</a>
     </div>
     <div class="mb-3">
-        <a class="btn btn-primary btn-sm" asp-page="/WriteTopic" asp-route-boardid="@Model.BoardId">+新话题</a>
+        @{
+            
+                if (Model.IsAuthorized())
+                {
+                    <a class="btn btn-primary btn-sm" asp-page="/WriteTopic" asp-route-boardid="@Model.BoardId">+新话题</a>
+                    goto END; 
+                }
+
+                if (!Config["ShowButtonWhenFeatureDisabled"].ParseBool() && !Config["AllowAnonymousTopic"].ParseBool())
+                {
+                    goto END;
+                }
+
+                <a class="btn btn-primary btn-sm" asp-page="/WriteTopic" asp-route-boardid="@Model.BoardId">+新话题</a>
+                END:
+           
+            
+        }
     </div>
 <table class="table table-bordered">
     <thead>

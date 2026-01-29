@@ -29,7 +29,7 @@ public class WriteTopic(ForumDbContext forumDbContext, IConfiguration configurat
             return RedirectToPage("/Index");
         }
         
-        if (Configuration["AllowAnonymousTopic"]?.ToLowerInvariant() != "true" && (HttpContext.Session.GetLong("uid") is null || _forumDbContext.Users.Any(i=>i.Id == HttpContext.Session.GetLong("uid"))))
+        if (Configuration["AllowAnonymousTopic"]?.ToLowerInvariant() != "true" && !_forumDbContext.Users.Any(i=>i.Id == HttpContext.Session.GetLong("uid")))
         {
             return RedirectToPage("/User/Login");
         }
