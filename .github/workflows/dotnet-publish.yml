@@ -1,0 +1,43 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: .NET
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 10.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Publish osx-arm64
+      run: dotnet publish --no-build --configuration Release -a arm64 --os osx --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish osx-x64
+      run: dotnet publish --no-build --configuration Release -a x64 --os osx --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish win-x64
+      run: dotnet publish --no-build --configuration Release -a x64 --os win --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish win-x86
+      run: dotnet publish --no-build --configuration Release -a x86 --os win --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish win-arm64
+      run: dotnet publish --no-build --configuration Release -a arm64 --os win --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish linux-arm64
+      run: dotnet publish --no-build --configuration Release -a arm64 --os linux --output ./publish_output -p:PublishSingleFile=true
+    - name: Publish linux-x64
+      run: dotnet publish --no-build --configuration Release -a x64 --os linux --output ./publish_output -p:PublishSingleFile=true
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: published-app
+        path: ./publish_output # The folder containing the published files
