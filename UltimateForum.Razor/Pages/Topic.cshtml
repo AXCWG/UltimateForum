@@ -129,6 +129,10 @@
 
                         <a asp-page="/">@Model.TopicData.Creater.Username</a>
                         <div class="text-secondary-emphasis">加入：@Model.TopicData.Creater.Joined</div>
+                        @if (Model.IsAdmin() || HttpContext.Session.GetLong("uid") == Model.TopicData.CreaterId)
+                        {
+                            <a asp-page-handler="TopicDelete" asp-route-topicid="@Model.TopicId" class="link-danger">删除</a>
+                        }
                     }
 
 
@@ -177,7 +181,10 @@
 
                                 <a asp-page="/">@(p.Creator?.DisplayName ?? p.Creator?.Username ?? "已删除") </a>
                                 <div class="text-secondary-emphasis">加入：@(p.Creator?.Joined.ToString(CultureInfo.CurrentCulture) ?? "已删除")</div>
-
+                                @if (Model.IsAdmin() || HttpContext.Session.GetLong("uid") == p.CreatorId)
+                                {
+                                    <a asp-page-handler="PostDelete" asp-route-postid="@p.Id" class="link-danger">删除</a>
+                                }
 
                             </div>
 

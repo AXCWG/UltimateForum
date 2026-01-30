@@ -35,6 +35,12 @@
            
             
         }
+        @{
+            if (Model.IsAdmin())
+            {
+                <a class="link-danger" asp-page-handler="DeleteBoard" asp-route-id="@Model.BoardId">删除此版块</a>
+            }
+        }
     </div>
 <table class="table table-bordered">
     <thead>

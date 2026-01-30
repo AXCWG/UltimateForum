@@ -92,7 +92,8 @@ using (var scope = app.Services.CreateScope())
             Description = "综合版块",
             Created = DateTime.Now,
             Order = 0,
-            BoardGroup = newBoardGroup
+            BoardGroup = newBoardGroup,
+            CreatedBy = user
         };
         db.Boards.Add(newBoard);
 

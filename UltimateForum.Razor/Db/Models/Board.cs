@@ -19,7 +19,8 @@ public class Board
     public ICollection<BoardUserOrganizer> BoardUserOrganizers { get; set; }
     
     public BoardGroup? BoardGroup { get; set; }
-    [ForeignKey(nameof(BoardGroup))]
     public long? BoardGroupId { get; set; }
+    public User? CreatedBy { get; set; }
+    public long? CreatedById { get; set; }
 
 }

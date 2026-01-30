@@ -52,6 +52,8 @@ public class ForumDbContext : DbContext
                 .HasForeignKey(i => i.CreatedById).OnDelete(DeleteBehavior.SetNull);
             modelBuilder.Entity<Board>().HasOne(i=>i.BoardGroup).WithMany(i=>i.Boards).HasForeignKey(i=>i.BoardGroupId)
                 .OnDelete(DeleteBehavior.SetNull);
+            modelBuilder.Entity<Board>().HasOne(i => i.CreatedBy).WithMany(i => i.CreatedBoards)
+                .HasForeignKey(i => i.CreatedById).OnDelete(DeleteBehavior.SetNull); 
         }
         else
         {

@@ -61,7 +61,36 @@
        
     </div>
 </div>
-<div style="max-width: 60rem" class="row mt-4 mx-auto">
+<div style="max-width: 60rem" class=" mt-4 mx-auto">
+    @{
+        if (Model.Configuration["UseBoardCreation"].ParseBool())
+        {
+            if (HttpContext.Session.GetLong("uid") is null)
+            {
+                if (Model.Configuration["AllowAnonymousBoard"].ParseBool())
+                {
+                    <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
+                
+                }else if (Model.Configuration["ShowButtonWhenFeatureDisabled"].ParseBool())
+                {
+                    <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
+                
+                }
+            }
+            else
+            {
+                <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
+            }
+        }else if (Model.IsAdmin())
+        {
+            <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
+            
+        }
+        
+        
+        
+    }
+    
     <table class="table table-bordered" id="boards">
         <thead >
         <tr>
@@ -88,9 +117,9 @@
                 <td>
                     <div >
                         <h5><a asp-page="/Board" asp-route-boardid="@b.Id">@b.Name</a></h5>
-                        <div style="font-size: .7rem">@b.Description</div>
+                        <div style="font-size: .7rem">@b.Description By: @(b.CreatedBy?.Username ?? "已删除用户")</div>
                     </div>
-                   
+
                 </td>
                 <td class="text-center d-none d-md-table-cell">
                     <span>@Model.GetTopicCount(b.Id)</span>
@@ -105,7 +134,7 @@
                             if (latest is null)
                             {
                                 <span>板块中无话题</span>
-                                
+
                             }
                             else
                             {
@@ -114,15 +143,16 @@
                                     <div>By: <strong>@(latest.Creator?.Username ?? "匿名")</strong></div>
                                     <div class="text-secondary-emphasis">@latest.Content.ConcatEllipsisByChar(6)</div>
                                 </div>
-                                
+
                             }
                         }
-                        
+
                     </span>
+
                 </td>
             </tr>
         }
-        
+
         </tbody>
     </table>
 </div>

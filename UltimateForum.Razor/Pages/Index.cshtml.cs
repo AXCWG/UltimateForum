@@ -8,6 +8,7 @@ using UltimateForum.Db;
 using UltimateForum.Db.Models;
 using UltimateForum.Razor.Db;
 using UltimateForum.Razor.Db.Models;
+using UltimateForum.Razor.Pages.User;
 
 namespace UltimateForum.Razor.Pages;
 
@@ -32,6 +33,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
         if (Configuration["AllowUserCreateBoard"] == "True")
         {
             Boards = _db.Boards
+                .Include(i=>i.CreatedBy)
                 .OrderByDescending(i => i.Created)
                 .ToList();
         }
@@ -88,6 +90,8 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
         HttpContext.Session.Remove("uid");
         return RedirectToPage("/Index"); 
     }
+
+    public bool IsAdmin() => HttpContext.Session.GetLong("uid") == 2;
 
     
 

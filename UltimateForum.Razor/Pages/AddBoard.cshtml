@@ -1,0 +1,16 @@
+@page
+@model UltimateForum.Razor.Pages.AddBoard
+
+<div class="row mx-auto">
+    <div class="display-6">添加版块</div>
+    <form method="post" class="d-flex flex-column gap-3" asp-page-handler="AddBoard">
+        <span class="text-danger" asp-validation-for="AddBoardInst.Name" ></span>
+        <input class="form-control" placeholder="名称" asp-for="AddBoardInst.Name"/>
+        <span class="text-danger" asp-validation-for="AddBoardInst.Description" ></span>
+        <input class="form-control" placeholder="简介" asp-for="AddBoardInst.Description"/>
+        <button class="btn btn-primary" type="submit">添加</button>
+    </form>
+
+</div>
+
+<partial name="Validation"/>

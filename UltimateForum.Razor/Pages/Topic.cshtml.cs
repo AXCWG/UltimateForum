@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -70,4 +69,32 @@ public class Topic(ForumDbContext forumDbContext, BinaryDbContext binaryDbContex
     }
 
     public bool IsAuthorized() => _db.Users.Find(HttpContext.Session.GetLong("uid")) != null;
+    public bool IsAdmin() => HttpContext.Session.GetLong("uid") == 2;
+
+    public IActionResult OnGetTopicDelete()
+    {
+        var s = _db.Topics.Include(i=>i.Creater).Include(i=>i.Board).Include(i=>i.Posts.OrderBy(i=>i.CreatedAt)).ThenInclude(i=>i.Creator).FirstOrDefault(i => i.Id == TopicId);
+        if (s is null)
+        {
+            return RedirectToPage("/Index");// TODO Badreq page
+        }
+        _db.Topics.Remove(s);
+        _db.SaveChanges();
+        return RedirectToPage("/Board" ,new{s.BoardId});
+    }
+
+    public IActionResult OnGetPostDelete(long postId)
+    {
+        var t = _db.Posts.Find(postId);
+        if (t is null)
+        {
+            return BadRequest(); 
+        }
+        _db.Posts.Remove(t);
+        _db.SaveChanges();
+        return RedirectToPage("/Topic", new
+        {
+            t.TopicId
+        });
+    }
 }
