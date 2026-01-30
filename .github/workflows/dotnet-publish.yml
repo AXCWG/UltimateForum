@@ -23,19 +23,19 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
     - name: Publish osx-arm64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os osx --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os osx --output ./publish_output -p:PublishSingleFile=true
     - name: Publish osx-x64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os osx --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os osx --output ./publish_output -p:PublishSingleFile=true
     - name: Publish win-x64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os win --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os win --output ./publish_output -p:PublishSingleFile=true
     - name: Publish win-x86
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x86 --os win --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x86 --os win --output ./publish_output -p:PublishSingleFile=true
     - name: Publish win-arm64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os win --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os win --output ./publish_output -p:PublishSingleFile=true
     - name: Publish linux-arm64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os linux --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a arm64 --os linux --output ./publish_output -p:PublishSingleFile=true
     - name: Publish linux-x64
-      run: dotnet publish UltimateForum/UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os linux --output ./publish_output -p:PublishSingleFile=true
+      run: dotnet publish UltimateForum.Razor/UltimateForum.Razor.csproj --no-build --configuration Release -a x64 --os linux --output ./publish_output -p:PublishSingleFile=true
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
