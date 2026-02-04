@@ -63,15 +63,15 @@
 </div>
 <div style="max-width: 60rem" class=" mt-4 mx-auto">
     @{
-        if (Model.Configuration["UseBoardCreation"].ParseBool())
+        if (Model.Configuration.AllowUserCreateBoard)
         {
             if (HttpContext.Session.GetLong("uid") is null)
             {
-                if (Model.Configuration["AllowAnonymousBoard"].ParseBool())
+                if (Model.Configuration.AllowAnonymousBoard)
                 {
                     <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
                 
-                }else if (Model.Configuration["ShowButtonWhenFeatureDisabled"].ParseBool())
+                }else if (Model.Configuration.ShowCreateBoardWhenRequirementNotMet)
                 {
                     <a class="btn btn-primary btn-sm mb-2" asp-page="/AddBoard">添加版块</a>
                 
@@ -94,7 +94,8 @@
     <table class="table table-bordered" id="boards">
         <thead >
         <tr>
-            <td class="col-8">
+            <td></td>
+            <td class="col-7">
                 <div class="d-flex flex-row justify-content-between">
                     <span>板块</span>
                 </div>
@@ -114,6 +115,9 @@
         @foreach (Db.Models.Board b in Model.Boards)
         {
             <tr>
+                <td>
+                    <button class="btn btn-sm btn-primary">交换</button>
+                </td>
                 <td>
                     <div >
                         <h5><a asp-page="/Board" asp-route-boardid="@b.Id">@b.Name</a></h5>

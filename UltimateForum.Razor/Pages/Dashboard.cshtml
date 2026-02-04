@@ -45,86 +45,25 @@
                 
                 <form method="post" asp-page-handler="SaveTogglesBlock">
                     <div class="d-flex gap-3 flex-wrap">
-                        <div class="form-check form-switch">
-                            
-                            @if (Model.Config["UseBoardCreation"].ParseBool())
-                            {
-                                <input class="form-check-input" type="checkbox" id="UseBoardCreationToggle" checked asp-for="UseBoardCreation"/>
+                        @foreach (var i in Model.Config.AsKvEnumerable())
+                        {
+                            var val = (bool)typeof(IAppConfigurationProperties).GetProperty(i.Key)!.GetValue(Model.Option)!;
+                            <div class="form-check form-switch">
+                                @if (i.Value.value)
+                                {
+                                @* @Html.EditorFor(u=>u.Option.GetType().GetProperty(i.Key), new { htmlAttributes = new { @class = "form-check-input", type = "checkbox", id = i.Key + "Toggle", @checked = "checked",} }) *@
+                                <input class="form-check-input" type="checkbox" id="@(i.Key)Toggle" checked asp-for="@val" name="@("Option."+i.Key)"/>
+                                }
+                                else
+                                {
+                                @* @Html.Editor("Option." + i.Key, new { htmlAttributes = new { @class = "form-check-input", type = "checkbox", id = i.Key + "Toggle" } }) *@
+                                <input class="form-check-input" type="checkbox" id="@(i.Key)Toggle" asp-for="@val" name="@("Option."+i.Key)"/>
+                                }
 
-                            }
-                            else
-                            {
-                                <input class="form-check-input" type="checkbox" id="UseBoardCreationToggle" asp-for="UseBoardCreation"/>
-
-                            }
-                            <label for="UseBoardCreationToggle">启用创建板块</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            @if (Model.Config["AllowUserCreateBoard"].ParseBool())
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowUserCreateBoard" checked asp-for="AllowUserCreateBoard"/>
-                                
-                            }
-                            else
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowUserCreateBoard" asp-for="AllowUserCreateBoard"/>
-                                
-                            }
-                            <label for="AllowUserCreateBoard">启用用户创建板块</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            @if (Model.Config["AllowAnonymousPost"].ParseBool())
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousPost" checked asp-for="AllowAnonymousPost"/>
-                                
-                            }
-                            else
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousPost" asp-for="AllowAnonymousPost"/>
-                                
-                            }
-                            <label for="AllowAnonymousPost">启用匿名回复</label>
-                        </div>
-                        <div class="form-check form-switch">
-                            @if (Model.Config["AllowAnonymousTopic"].ParseBool())
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousTopic" checked asp-for="AllowAnonymousTopic"/>
-                            }
-                            else
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousTopic" asp-for="AllowAnonymousTopic"/>
-                                
-                            }
-                            <label for="AllowAnonymousTopic">启用匿名话题</label>
+                                <label for="@(i.Key)Toggle">@i.Value.LocalizedString</label>
+                            </div>
                             
-                        </div>
-                        <div class="form-check form-switch">
-                            @if (Model.Config["AllowAnonymousBoard"].ParseBool())
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousBoard" checked asp-for="AllowAnonymousBoard"/>
-                            }
-                            else
-                            {
-                                <input class="form-check-input" type="checkbox" id="AllowAnonymousBoard" asp-for="AllowAnonymousBoard"/>
-                                
-                            }
-                            <label for="AllowAnonymousPost">启用匿名版块</label>
-                            
-                        </div>
-                        <div class="form-check form-switch">
-                            @if (Model.Config["ShowButtonWhenFeatureDisabled"].ParseBool())
-                            {
-                            <input class="form-check-input" type="checkbox" id="ShowButtonWhenFeatureDisabled" checked asp-for="ShowButtonWhenFeatureDisabled"/>
-                                
-                            }
-                            else
-                            {
-                            <input class="form-check-input" type="checkbox" id="ShowButtonWhenFeatureDisabled"  asp-for="ShowButtonWhenFeatureDisabled"/>
-                                
-                            }
-                            <label for="AllowAnonymousPost">功能不开启时显示按钮</label>
-                            
-                        </div>
+                        }
                     </div>
                     <button type="submit" class="btn btn-primary">保存</button>
                 </form>

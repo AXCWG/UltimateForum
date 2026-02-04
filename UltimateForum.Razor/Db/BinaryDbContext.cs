@@ -8,10 +8,8 @@ namespace UltimateForum.Razor.Db;
 public class BinaryDbContext : DbContext
 {
     public DbSet<Binary> Binaries { get; set; }
-    private readonly string _str; 
-    public BinaryDbContext(string str)
+    public BinaryDbContext()
     {
-        _str = str; 
     }
     public BinaryDbContext(DbContextOptions<BinaryDbContext> options) : base(options)
     {

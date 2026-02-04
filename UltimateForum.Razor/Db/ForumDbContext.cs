@@ -12,24 +12,14 @@ public class ForumDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<BoardGroup> BoardGroups { get; set; }
     public DbSet<BoardUserOrganizer> BoardUserOrganizers { get; set; }
-    private readonly string _str;
-    private readonly DbType _type; 
-    public enum DbType
-    {
-        Mysql, 
-        Sqlite
-    }
+    
     public ForumDbContext(DbContextOptions<ForumDbContext> options)
         : base(options)
     {
         
     }
 
-    public ForumDbContext(string str, DbType type )
-    {
-        _str = str; 
-        _type =  type;
-    }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -22,12 +22,18 @@ public class Dashboard(ForumDbContext db, AppConfiguration config) : PageModel
     [BindProperty]
     public string? ForumDescription { get; set; }
 
-    [BindProperty] public bool UseBoardCreation { get; set; }
-    [BindProperty] public bool AllowUserCreateBoard { get; set; }
-    [BindProperty] public bool AllowAnonymousPost { get; set; }
-    [BindProperty] public bool AllowAnonymousTopic { get; set; }
-    [BindProperty] public bool AllowAnonymousBoard { get; set; }
-    [BindProperty] public bool ShowButtonWhenFeatureDisabled { get; set; }
+    public class Options : IAppConfigurationProperties
+    {
+        public bool AllowUserCreateBoard { get; set; }
+        public bool AllowAnonymousPost { get; set; }
+        public bool AllowAnonymousTopic { get; set; }
+        public bool AllowAnonymousBoard { get; set; }
+        public bool ShowCreateBoardWhenRequirementNotMet { get; set; }
+        public bool ShowCreateTopicWhenRequirementNotMet { get; set; }
+        public bool ShowCreatePostWhenRequirementNotMet { get; set; }
+    }
+    [BindProperty]
+    public Options Option { get; set; } = new();
     
     private readonly ForumDbContext _db = db ;
     public readonly AppConfiguration Config = config;
@@ -84,18 +90,17 @@ public class Dashboard(ForumDbContext db, AppConfiguration config) : PageModel
         return RedirectToPage("/Dashboard"); 
     }
 
-    public async Task<IActionResult> OnPostSaveTogglesBlock()
+    public IActionResult OnPostSaveTogglesBlock()
     {
         if (!IsAdmin())
         {
             return RedirectToPage("/User/Login"); 
         }
-        await Config.SetValueAsync("UseBoardCreation", UseBoardCreation.ToString());
-        await Config.SetValueAsync("AllowUserCreateBoard", AllowUserCreateBoard.ToString());
-        await Config.SetValueAsync("AllowAnonymousPost", AllowAnonymousPost.ToString());
-        await Config.SetValueAsync("AllowAnonymousTopic", AllowAnonymousTopic.ToString());
-        await Config.SetValueAsync("AllowAnonymousBoard", AllowAnonymousBoard.ToString());
-        await Config.SetValueAsync("ShowButtonWhenFeatureDisabled", ShowButtonWhenFeatureDisabled.ToString());
+        foreach (var i in typeof(IAppConfigurationProperties).GetProperties())
+        {
+            typeof(IAppConfigurationProperties).GetProperty(i.Name)!.SetValue(Config, i.GetValue(Option));
+            
+        }
         return RedirectToPage("/Dashboard");
     }
 

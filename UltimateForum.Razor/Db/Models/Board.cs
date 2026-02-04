@@ -12,11 +12,11 @@ public class Board
     public required int Order { get; set;  }
     public required string Name { get; set; }
     public required string Description { get; set; }
-    public ICollection<Topic> Topics { get; set; }
+    public ICollection<Topic> Topics { get; set; } = new List<Topic>();
     
     public required DateTime Created { get; set; }
-    
-    public ICollection<BoardUserOrganizer> BoardUserOrganizers { get; set; }
+
+    public ICollection<BoardUserOrganizer> BoardUserOrganizers { get; set; } = new List<BoardUserOrganizer>(); 
     
     public BoardGroup? BoardGroup { get; set; }
     public long? BoardGroupId { get; set; }

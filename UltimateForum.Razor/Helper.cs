@@ -41,7 +41,7 @@ public static class Helper
                     {
                         return long.Parse(tt[i + 1]);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // ignored
                     }

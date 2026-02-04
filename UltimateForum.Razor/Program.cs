@@ -1,13 +1,10 @@
 using AXHelper.Extensions;
 using AXHelper.Helpers;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using UltimateForum.Db;
 using UltimateForum.Db.Models;
 using UltimateForum.Razor;
 using UltimateForum.Razor.Db;
 using UltimateForum.Razor.Db.Models;
-using UltimateForum.Razor.Pages.User;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +18,10 @@ builder.Services.AddMemoryCache();
 switch (builder.Configuration["DbType"])
 {
     case "sqlite":
-        builder.Services.AddDbContext<ForumDbContext>(o => o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")?.CreateDirectoryOfDataSource(), o=>o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
+        builder.Services.AddDbContext<ForumDbContext>(o =>
+            o.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")?.CreateDirectoryOfDataSource(),
+                sqliteDbContextOptionsBuilder =>
+                    sqliteDbContextOptionsBuilder.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)));
         break;
     case "mysql":
         throw new NotImplementedException();

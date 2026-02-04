@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using UltimateForum.Razor.Db.Models;
-
+#pragma warning disable 8618
 namespace UltimateForum.Db.Models;
 
 [PrimaryKey(nameof(Id))]
@@ -27,3 +27,4 @@ public class User
     public required DateTime Joined { get; set; }
     public required bool Op { get; set; }
 }
+#pragma warning restore 8618

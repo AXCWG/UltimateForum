@@ -12,11 +12,11 @@ using UltimateForum.Razor.Pages.User;
 
 namespace UltimateForum.Razor.Pages;
 
-public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext, IConfiguration configuration) : PageModel
+public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext, AppConfiguration configuration) : PageModel
 {
     private readonly ForumDbContext _db = context;
     private readonly BinaryDbContext _binaryDbContext = binaryDbContext;
-    public readonly IConfiguration Configuration = configuration;
+    public readonly AppConfiguration Configuration = configuration;
     public List<Db.Models.Board> Boards = []; 
 
     

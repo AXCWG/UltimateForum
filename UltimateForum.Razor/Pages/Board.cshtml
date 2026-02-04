@@ -24,8 +24,8 @@
                     <a class="btn btn-primary btn-sm" asp-page="/WriteTopic" asp-route-boardid="@Model.BoardId">+新话题</a>
                     goto END; 
                 }
-
-                if (!Config["ShowButtonWhenFeatureDisabled"].ParseBool() && !Config["AllowAnonymousTopic"].ParseBool())
+                // TODO incomplete business.
+                if (!Config.ShowCreateTopicWhenRequirementNotMet && !Config.AllowAnonymousTopic)
                 {
                     goto END;
                 }
