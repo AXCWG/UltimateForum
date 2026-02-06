@@ -150,4 +150,12 @@ public static class Helper
             return users.Any(i => i.Id == uid);
         }
     }
+
+    extension (Random r)
+    {
+        public float NextSingle(float min, float max)
+        {
+            return r.NextSingle()  * (max - min) + min;
+        }
+    }
 }

@@ -1,6 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using AXHelper.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -28,13 +30,14 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
         [Required(AllowEmptyStrings = false, ErrorMessage = "密码为必填项")]
         public required string Password { get; set; }
     
+    
     public IActionResult OnGet()
     {
         if (Configuration["AllowUserCreateBoard"] == "True")
         {
             Boards = _db.Boards
                 .Include(i=>i.CreatedBy)
-                .OrderByDescending(i => i.Created)
+                .OrderByDescending(i => i.Order)
                 .ToList();
         }
         else
@@ -72,7 +75,7 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
     }
     public IActionResult OnPostLogin()
     {
-        if (!ModelState.IsValid) return BadRequest("输入不合法");
+        if (ModelState.GetValidationState(nameof(Username)) != ModelValidationState.Valid || ModelState.GetValidationState(nameof(Password)) != ModelValidationState.Valid) return BadRequest("输入不合法");
        
       var u = _db.Users.FirstOrDefault(i=>i.Username == Username && i.Password == Password.ToSha256String());
       if (u == null)
@@ -92,7 +95,25 @@ public class IndexModel(ForumDbContext context, BinaryDbContext binaryDbContext,
     }
 
     public bool IsAdmin() => HttpContext.Session.GetLong("uid") == 2;
-
+    [BindProperty]
+    public required long Id { get; set; }
+    [BindProperty] 
+    public required long BeforeId { get; set; }
+    // Not sure my feeling about this. 
+    public IActionResult OnPostReInsertion()
+    {
+        if (ModelState["Id"]?.ValidationState != ModelValidationState.Valid ||
+            ModelState["BeforeId"]?.ValidationState != ModelValidationState.Valid)
+            return RedirectToPage("/Index");
+        var target = _db.Boards.Find(Id)!;
+        var before = _db.Boards.Find(BeforeId)!;
+        var betweenUp = _db.Boards.OrderBy(i => i.Order).LastOrDefault(i => i.Order > before.Order); 
+        target?.Order = Random.Shared.NextSingle(before.Order, betweenUp?.Order ?? _db.Boards.OrderByDescending(i => i.Order).FirstOrDefault()!.Order + 1);
+        if (target != null) _db.Boards.Update(target);
+        _db.SaveChanges();
+        
+        return RedirectToPage("/Index"); 
+    }
     
 
     

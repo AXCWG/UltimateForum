@@ -6,10 +6,11 @@ namespace UltimateForum.Razor.Db.Models;
 
 [PrimaryKey(nameof(Id))]
 [Index(nameof(Name))]
+[Index(nameof(Order),IsUnique = true)]
 public class Board
 {
     public long Id { get; set;  }
-    public required int Order { get; set;  }
+    public required float Order { get; set;  }
     public required string Name { get; set; }
     public required string Description { get; set; }
     public ICollection<Topic> Topics { get; set; } = new List<Topic>();

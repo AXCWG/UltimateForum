@@ -64,7 +64,8 @@ public class WriteTopic(ForumDbContext forumDbContext, IConfiguration configurat
             Content = sanitizer.Sanitize(Content),
             Creater = user ?? _forumDbContext.Users.Find(1L),
             CreatedOn = DateTime.Now,
-            Board = board 
+            Board = board,
+            
         }; 
         _forumDbContext.Topics.Add(topic);
         _forumDbContext.SaveChanges();

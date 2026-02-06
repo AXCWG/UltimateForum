@@ -116,7 +116,7 @@
         {
             <tr>
                 <td>
-                    <button class="btn btn-sm btn-primary">交换</button>
+                    <button asp-id="@b.Id" class="js-replace-arrange btn btn-sm btn-primary">排列</button>
                 </td>
                 <td>
                     <div >
@@ -160,7 +160,49 @@
         </tbody>
     </table>
 </div>
+<form id="hidden-insert" class="d-none" method="post" >
+    <input id="id" asp-for="@Model.Id"/>
+    <input id="beforeId" asp-for="@Model.BeforeId"/>
+    <button id="insert-submit" class="d-none" type="submit" asp-page-handler="ReInsertion"></button>
+</form>
+<script>
+    let id = 0; 
+    let ins = 0; 
+    
+    function UploadReInsertion(){
+        document.getElementById("id").value = id; 
+        document.getElementById("beforeId").value = ins;
+        document.getElementById("insert-submit").click();
+    }
+    function ChooseIndexToChooseInsert(){
+        for (let n of document.getElementsByClassName("js-replace-arrange")){
+            n.classList.remove("btn-primary");
+            n.classList.add("btn-danger");
+            n.innerText="之前";
+        }
+       
+    }
+    let secondClick = (e)=>{
+        ins = e.target.attributes.getNamedItem("asp-id").value;
+        UploadReInsertion(); 
+    }
+    let initClick = (e)=>{
+        ChooseIndexToChooseInsert();
+        for (let n of document.getElementsByClassName("js-replace-arrange")) {
+            n.removeEventListener("click", initClick);
+            n.addEventListener("click", secondClick);
+        }
+        
+        id = e.target.attributes.getNamedItem("asp-id").value;
+        
+    }
+    for (let n of document.getElementsByClassName("js-replace-arrange")) {
+        n.addEventListener("click",initClick);
+        
+    }
+</script>
 <script>
     document.getElementById('index-register-button').href += "?whereyouarefrom=" + encodeURIComponent(location.href);
+    
 </script>
 <partial name="Validation"/>

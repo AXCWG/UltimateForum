@@ -40,9 +40,10 @@ public class AddBoard(ForumDbContext dbContext, AppConfiguration config) : PageM
             return Page();
         }
 
+        var l = _db.Boards.OrderBy(i=>i.Id).Last();
         var s = new Db.Models.Board
         {
-            Order = 0,
+            Order = Random.Shared.NextSingle(l.Order, l.Order+1),
             Name = AddBoardInst.Name,
             Description = AddBoardInst.Description,
             Created = DateTime.Now,

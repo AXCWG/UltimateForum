@@ -61,4 +61,26 @@ public sealed class Test1
 
         return res;
     }
+
+    [TestMethod]
+    public void Random()
+    {
+        IEnumerable<double> Doubles()
+        {
+            for (var i = 0; i < 1000000000; i++)
+                yield return System.Random.Shared.NextSingle(0, 5);
+        }
+        Console.WriteLine(Doubles().Any(i=>(int)i == 5));
+    }
+}
+
+public static class Ext
+{
+    extension (Random r)
+    {
+        public double NextSingle(double min, double max)
+        {
+            return r.NextSingle()  * (max - min) + min;
+        }
+    }
 }
